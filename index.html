@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOCAL POINT: Hold the Vision</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Lobby Screen -->
+        <div id="lobby-screen" class="screen active">
+            <header class="game-header">
+                <h1 class="game-title">FOCAL POINT</h1>
+                <p class="game-tagline">Hold the Vision</p>
+            </header>
+            
+            <div class="lobby-container">
+                <div class="lobby-card">
+                    <h2>Create Game</h2>
+                    <div class="form-group">
+                        <label for="host-name">Your Name</label>
+                        <input type="text" id="host-name" placeholder="Enter your name" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="game-mode">Game Mode</label>
+                        <select id="game-mode">
+                            <option value="team">Team Play (3-6 players)</option>
+                            <option value="solo">Solo Mode (1 player + facilitator)</option>
+                            <option value="parallel">Parallel Teams (2 teams)</option>
+                        </select>
+                    </div>
+                    <button id="create-game-btn" class="btn btn-primary">Create Game</button>
+                </div>
+                
+                <div class="lobby-divider">
+                    <span>OR</span>
+                </div>
+                
+                <div class="lobby-card">
+                    <h2>Join Game</h2>
+                    <div class="form-group">
+                        <label for="player-name">Your Name</label>
+                        <input type="text" id="player-name" placeholder="Enter your name" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="game-code">Game Code</label>
+                        <input type="text" id="game-code" placeholder="Enter 4-letter code" maxlength="4" style="text-transform: uppercase;">
+                    </div>
+                    <button id="join-game-btn" class="btn btn-secondary">Join Game</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Waiting Room -->
+        <div id="waiting-room" class="screen">
+            <header class="game-header">
+                <h1 class="game-title">FOCAL POINT</h1>
+                <p class="game-tagline">Waiting for Players</p>
+            </header>
+            
+            <div class="waiting-container">
+                <div class="game-code-display">
+                    <span class="label">Game Code:</span>
+                    <span id="display-game-code" class="code">----</span>
+                </div>
+                
+                <div class="players-list">
+                    <h3>Players (<span id="player-count">0</span>/6)</h3>
+                    <ul id="players-ul"></ul>
+                </div>
+                
+                <div class="waiting-actions">
+                    <button id="start-game-btn" class="btn btn-primary" disabled>Start Game (need 3+ players)</button>
+                    <button id="leave-lobby-btn" class="btn btn-outline">Leave</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Character Selection -->
+        <div id="character-screen" class="screen">
+            <header class="game-header">
+                <h1 class="game-title">Choose Your Character</h1>
+                <p class="game-tagline">Select your leadership style</p>
+            </header>
+            
+            <div class="characters-grid" id="characters-grid"></div>
+            
+            <div class="character-actions">
+                <button id="confirm-character-btn" class="btn btn-primary" disabled>Confirm Character</button>
+            </div>
+        </div>
+
+        <!-- Main Game Screen -->
+        <div id="game-screen" class="screen">
+            <!-- Top Bar -->
+            <div class="game-top-bar">
+                <div class="round-info">
+                    <span class="label">Round</span>
+                    <span id="current-round">1</span>/5
+                </div>
+                <div class="scenario-info">
+                    <span id="scenario-name">Scenario</span>
+                </div>
+                <div class="phase-info">
+                    <span id="current-phase">Setup</span>
+                </div>
+            </div>
+
+            <!-- Main Game Area -->
+            <div class="game-main-area">
+                <!-- Left Panel: Trackers -->
+                <div class="left-panel">
+                    <div class="tracker-card">
+                        <h3>Vision Drift</h3>
+                        <div class="drift-gauge">
+                            <div class="gauge-bar">
+                                <div id="drift-fill" class="gauge-fill"></div>
+                                <div class="gauge-marker" style="left: 50%"></div>
+                            </div>
+                            <div class="gauge-labels">
+                                <span>0</span>
+                                <span>10</span>
+                                <span>20</span>
+                            </div>
+                        </div>
+                        <div id="drift-value" class="drift-value">0</div>
+                    </div>
+                    
+                    <div class="tracker-card">
+                        <h3>Psychological Safety</h3>
+                        <div class="safety-gauge">
+                            <div class="safety-bar">
+                                <div id="safety-fill" class="safety-fill"></div>
+                            </div>
+                            <div class="safety-labels">
+                                <span>Low</span>
+                                <span>High</span>
+                            </div>
+                        </div>
+                        <div id="safety-value" class="safety-value">75%</div>
+                    </div>
+                    
+                    <div class="alignment-tokens">
+                        <h3>Alignment Tokens</h3>
+                        <div id="tokens-display" class="tokens-display"></div>
+                    </div>
+                </div>
+
+                <!-- Center: Shared Model Board -->
+                <div class="center-panel">
+                    <div class="shared-model-board" id="shared-model-board">
+                        <div class="board-title">Shared Model</div>
+                        <div class="board-grid" id="board-grid"></div>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Cards -->
+                <div class="right-panel">
+                    <div class="current-disruption" id="current-disruption">
+                        <h3>Current Disruption</h3>
+                        <div id="disruption-card" class="disruption-card"></div>
+                    </div>
+                    
+                    <div class="scenario-context">
+                        <h3>Scenario Context</h3>
+                        <div id="scenario-details"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom: Player Hand -->
+            <div class="player-hand-area">
+                <div class="player-info">
+                    <div id="my-character" class="my-character"></div>
+                    <div id="my-name" class="my-name"></div>
+                </div>
+                <div class="hand-container">
+                    <h3>Your Viewpoint Cards</h3>
+                    <div id="player-hand" class="player-hand"></div>
+                </div>
+                <div class="hand-actions">
+                    <button id="play-card-btn" class="btn btn-primary" disabled>Play Selected Card</button>
+                    <button id="use-ability-btn" class="btn btn-secondary" disabled>Use Character Ability</button>
+                </div>
+            </div>
+
+            <!-- Other Players -->
+            <div class="other-players" id="other-players"></div>
+        </div>
+
+        <!-- Strategic Pause Modal -->
+        <div id="strategic-pause-modal" class="modal">
+            <div class="modal-content">
+                <h2>Strategic Pause</h2>
+                <p class="pause-message">Vision Drift has reached critical level. Time to step back and reassess.</p>
+                <div class="coaching-prompt">
+                    <h3>Coaching Prompt</h3>
+                    <p id="coaching-question"></p>
+                </div>
+                <div class="pause-actions">
+                    <p>Spend 2 Alignment Tokens to restore one field:</p>
+                    <select id="restore-field-select"></select>
+                    <button id="restore-field-btn" class="btn btn-primary">Restore Field</button>
+                </div>
+                <button id="continue-game-btn" class="btn btn-outline">Continue Without Restoration</button>
+            </div>
+        </div>
+
+        <!-- Debriefing Screen -->
+        <div id="debrief-screen" class="screen">
+            <header class="game-header">
+                <h1 class="game-title">Debriefing</h1>
+                <p class="game-tagline">Reflect on Your Experience</p>
+            </header>
+            
+            <div class="debrief-container">
+                <div class="game-result" id="game-result"></div>
+                
+                <div class="achievements" id="achievements"></div>
+                
+                <div class="debrief-questions">
+                    <h2>Reflection Questions</h2>
+                    <div id="questions-list"></div>
+                </div>
+                
+                <div class="debrief-notes">
+                    <h3>Your Notes</h3>
+                    <textarea id="debrief-notes-textarea" placeholder="Record your insights and takeaways..."></textarea>
+                </div>
+                
+                <div class="debrief-actions">
+                    <button id="export-debrief-btn" class="btn btn-secondary">Export Notes</button>
+                    <button id="play-again-btn" class="btn btn-primary">Play Again</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Modal -->
+        <div id="help-modal" class="modal">
+            <div class="modal-content large">
+                <button class="modal-close" id="close-help">&times;</button>
+                <h2>How to Play</h2>
+                <div class="help-content">
+                    <section>
+                        <h3>Objective</h3>
+                        <p>Work together to maintain the Shared Model and hold the vision across 5 rounds of project challenges.</p>
+                    </section>
+                    <section>
+                        <h3>Win Conditions</h3>
+                        <ul>
+                            <li>Vision Drift at 8 or below</li>
+                            <li>At least 10 of 13 fields stable</li>
+                            <li>Psychological Safety above 50%</li>
+                            <li>Team can articulate Vision and Strategy</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>Round Structure</h3>
+                        <ol>
+                            <li><strong>Draw Scenario Card</strong> - Context update for the week</li>
+                            <li><strong>Draw Disruption Card</strong> - Challenge to the vision</li>
+                            <li><strong>Play Viewpoint Cards</strong> - Respond from your perspective</li>
+                            <li><strong>Negotiate</strong> - Discuss as a team</li>
+                            <li><strong>Resolve</strong> - Vote on the response</li>
+                            <li><strong>Update</strong> - Adjust trackers and tokens</li>
+                            <li><strong>Replenish</strong> - Draw new Viewpoint Cards</li>
+                        </ol>
+                    </section>
+                    <section>
+                        <h3>Strategic Pause</h3>
+                        <p>When Vision Drift reaches 10, play stops. Use this time to reassess the Shared Model and restore stability.</p>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="help-btn" class="help-btn" title="Help">?</button>
+    
+    <script src="game.js"></script>
+</body>
+</html>
