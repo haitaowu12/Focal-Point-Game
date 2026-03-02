@@ -1,3 +1,5 @@
+'use strict';
+
 const GAME_CONFIG = {
     minPlayers: 3,
     maxPlayers: 6,
@@ -389,34 +391,113 @@ class Game {
         this.peer = null;
         this.connections = new Map();
         this.isNetworkGame = false;
+        this.peerInitialized = false;
         
         this.init();
     }
     
     init() {
-        this.bindEvents();
-        this.renderCharacters();
-        this.initBoardState();
+        console.log('[Game] Initializing...');
+        try {
+            this.bindEvents();
+            this.renderCharacters();
+            this.initBoardState();
+            console.log('[Game] Initialization complete');
+        } catch (error) {
+            console.error('[Game] Initialization failed:', error);
+            this.showNotification('Failed to initialize game. Please refresh the page.', 'error');
+        }
     }
     
     bindEvents() {
-        document.getElementById('create-game-btn').addEventListener('click', () => this.createGame());
-        document.getElementById('join-game-btn').addEventListener('click', () => this.joinGame());
-        document.getElementById('start-game-btn').addEventListener('click', () => this.startGame());
-        document.getElementById('leave-lobby-btn').addEventListener('click', () => this.leaveLobby());
-        document.getElementById('confirm-character-btn').addEventListener('click', () => this.confirmCharacter());
-        document.getElementById('play-card-btn').addEventListener('click', () => this.playSelectedCard());
-        document.getElementById('use-ability-btn').addEventListener('click', () => this.useCharacterAbility());
-        document.getElementById('restore-field-btn').addEventListener('click', () => this.restoreField());
-        document.getElementById('continue-game-btn').addEventListener('click', () => this.continueAfterPause());
-        document.getElementById('export-debrief-btn').addEventListener('click', () => this.exportDebrief());
-        document.getElementById('play-again-btn').addEventListener('click', () => this.playAgain());
-        document.getElementById('help-btn').addEventListener('click', () => this.showHelp());
-        document.getElementById('close-help').addEventListener('click', () => this.hideHelp());
+        console.log('[Game] Binding events...');
         
-        document.getElementById('game-code').addEventListener('input', (e) => {
-            e.target.value = e.target.value.toUpperCase();
+        const createBtn = document.getElementById('create-game-btn');
+        const joinBtn = document.getElementById('join-game-btn');
+        
+        if (!createBtn) {
+            console.error('[Game] Create game button not found');
+            return;
+        }
+        
+        if (!joinBtn) {
+            console.error('[Game] Join game button not found');
+            return;
+        }
+        
+        createBtn.addEventListener('click', () => {
+            console.log('[Game] Create game clicked');
+            this.createGame();
         });
+        
+        joinBtn.addEventListener('click', () => {
+            console.log('[Game] Join game clicked');
+            this.joinGame();
+        });
+        
+        const startBtn = document.getElementById('start-game-btn');
+        if (startBtn) {
+            startBtn.addEventListener('click', () => this.startGame());
+        }
+        
+        const leaveBtn = document.getElementById('leave-lobby-btn');
+        if (leaveBtn) {
+            leaveBtn.addEventListener('click', () => this.leaveLobby());
+        }
+        
+        const confirmCharBtn = document.getElementById('confirm-character-btn');
+        if (confirmCharBtn) {
+            confirmCharBtn.addEventListener('click', () => this.confirmCharacter());
+        }
+        
+        const playCardBtn = document.getElementById('play-card-btn');
+        if (playCardBtn) {
+            playCardBtn.addEventListener('click', () => this.playSelectedCard());
+        }
+        
+        const useAbilityBtn = document.getElementById('use-ability-btn');
+        if (useAbilityBtn) {
+            useAbilityBtn.addEventListener('click', () => this.useCharacterAbility());
+        }
+        
+        const restoreFieldBtn = document.getElementById('restore-field-btn');
+        if (restoreFieldBtn) {
+            restoreFieldBtn.addEventListener('click', () => this.restoreField());
+        }
+        
+        const continueBtn = document.getElementById('continue-game-btn');
+        if (continueBtn) {
+            continueBtn.addEventListener('click', () => this.continueAfterPause());
+        }
+        
+        const exportBtn = document.getElementById('export-debrief-btn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => this.exportDebrief());
+        }
+        
+        const playAgainBtn = document.getElementById('play-again-btn');
+        if (playAgainBtn) {
+            playAgainBtn.addEventListener('click', () => this.playAgain());
+        }
+        
+        const helpBtn = document.getElementById('help-btn');
+        if (helpBtn) {
+            helpBtn.addEventListener('click', () => this.showHelp());
+        }
+        
+        const closeHelpBtn = document.getElementById('close-help');
+        if (closeHelpBtn) {
+            closeHelpBtn.addEventListener('click', () => this.hideHelp());
+        }
+        
+        const gameCodeInput = document.getElementById('game-code');
+        if (gameCodeInput) {
+            gameCodeInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.toUpperCase();
+            });
+        }
+        
+        console.log('[Game] Events bound successfully');
     }
     
     generateGameCode() {
@@ -429,8 +510,21 @@ class Game {
     }
     
     createGame() {
-        const name = document.getElementById('host-name').value.trim();
-        const mode = document.getElementById('game-mode').value;
+        console.log('[Game] Creating game...');
+        
+        const nameInput = document.getElementById('host-name');
+        const modeSelect = document.getElementById('game-mode');
+        
+        if (!nameInput || !modeSelect) {
+            console.error('[Game] Form elements not found');
+            this.showNotification('Error: Form not loaded. Please refresh.', 'error');
+            return;
+        }
+        
+        const name = nameInput.value.trim();
+        const mode = modeSelect.value;
+        
+        console.log('[Game] Name:', name, 'Mode:', mode);
         
         if (!name) {
             this.showNotification('Please enter your name', 'error');
@@ -444,6 +538,7 @@ class Game {
         this.state.playerId = 'host';
         this.isNetworkGame = true;
         
+        console.log('[Game] Initializing PeerJS with code:', this.state.gameCode);
         this.initPeer(this.state.gameCode);
         
         this.state.players = [{
@@ -454,13 +549,27 @@ class Game {
             character: null
         }];
         
+        console.log('[Game] Switching to waiting room');
         this.showScreen('waiting-room');
         this.updateWaitingRoom();
     }
     
     joinGame() {
-        const name = document.getElementById('player-name').value.trim();
-        const code = document.getElementById('game-code').value.trim().toUpperCase();
+        console.log('[Game] Joining game...');
+        
+        const nameInput = document.getElementById('player-name');
+        const codeInput = document.getElementById('game-code');
+        
+        if (!nameInput || !codeInput) {
+            console.error('[Game] Form elements not found');
+            this.showNotification('Error: Form not loaded. Please refresh.', 'error');
+            return;
+        }
+        
+        const name = nameInput.value.trim();
+        const code = codeInput.value.trim().toUpperCase();
+        
+        console.log('[Game] Name:', name, 'Code:', code);
         
         if (!name) {
             this.showNotification('Please enter your name', 'error');
@@ -478,45 +587,106 @@ class Game {
         this.state.isHost = false;
         this.isNetworkGame = true;
         
+        console.log('[Game] Initializing PeerJS to join:', code);
         this.initPeer(code, true);
     }
     
     initPeer(code, isJoining = false) {
+        console.log('[Peer] Initializing PeerJS...', { code, isJoining });
+        
         const peerId = isJoining ? this.state.playerId : code + '_host';
         
-        this.peer = new Peer(peerId, {
-            debug: 1
-        });
-        
-        this.peer.on('open', (id) => {
-            console.log('Peer connected with ID:', id);
+        try {
+            this.peer = new Peer(peerId, {
+                debug: 2,
+                config: {
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' }
+                    ]
+                }
+            });
             
-            if (isJoining) {
-                this.connectToHost(code);
-            } else {
-                document.getElementById('display-game-code').textContent = this.state.gameCode;
+            this.peer.on('open', (id) => {
+                console.log('[Peer] Connected with ID:', id);
+                this.peerInitialized = true;
+                
+                if (isJoining) {
+                    console.log('[Peer] Connecting to host:', code);
+                    this.connectToHost(code);
+                } else {
+                    console.log('[Peer] Host ready, game code:', this.state.gameCode);
+                    const codeDisplay = document.getElementById('display-game-code');
+                    if (codeDisplay) {
+                        codeDisplay.textContent = this.state.gameCode;
+                    }
+                }
+            });
+            
+            this.peer.on('connection', (conn) => {
+                console.log('[Peer] Incoming connection:', conn.peer);
+                this.handleConnection(conn);
+            });
+            
+            this.peer.on('error', (err) => {
+                console.error('[Peer] Error:', err);
+                this.handlePeerError(err);
+            });
+            
+            this.peer.on('disconnected', () => {
+                console.log('[Peer] Disconnected from server');
+                this.showNotification('Lost connection. Please refresh.', 'error');
+            });
+            
+        } catch (error) {
+            console.error('[Peer] Failed to initialize:', error);
+            this.showNotification('Failed to initialize network. Playing offline only.', 'warning');
+            this.isNetworkGame = false;
+            
+            if (!isJoining) {
+                this.showScreen('waiting-room');
+                const codeDisplay = document.getElementById('display-game-code');
+                if (codeDisplay) {
+                    codeDisplay.textContent = this.state.gameCode;
+                }
+                this.updateWaitingRoom();
             }
-        });
+        }
+    }
+    
+    handlePeerError(err) {
+        console.error('[Peer] Handling error:', err);
         
-        this.peer.on('connection', (conn) => {
-            this.handleConnection(conn);
-        });
+        let message = 'Connection error. ';
         
-        this.peer.on('error', (err) => {
-            console.error('Peer error:', err);
-            if (err.type === 'peer-unavailable') {
-                this.showNotification('Game not found. Check the code and try again.', 'error');
-            } else {
-                this.showNotification('Connection error: ' + err.message, 'error');
-            }
-        });
+        if (err.type === 'peer-unavailable') {
+            message = 'Game not found. Please check the code.';
+        } else if (err.type === 'unavailable-id') {
+            message = 'Game code already in use. Try creating a new game.';
+        } else if (err.type === 'network') {
+            message = 'Network error. Please check your connection.';
+        } else if (err.type === 'server-error') {
+            message = 'Server error. Please try again later.';
+        } else {
+            message += err.message || 'Please try again.';
+        }
+        
+        this.showNotification(message, 'error');
+        
+        if (!this.state.isHost) {
+            setTimeout(() => {
+                this.showScreen('lobby');
+            }, 2000);
+        }
     }
     
     connectToHost(code) {
+        console.log('[Peer] Connecting to host:', code);
+        
         const conn = this.peer.connect(code + '_host');
         
         conn.on('open', () => {
-            console.log('Connected to host');
+            console.log('[Peer] Connected to host successfully');
             conn.send({
                 type: 'join',
                 player: {
@@ -530,29 +700,41 @@ class Game {
         });
         
         conn.on('data', (data) => {
+            console.log('[Peer] Received data:', data);
             this.handleData(data, conn);
         });
         
         conn.on('close', () => {
+            console.log('[Peer] Connection to host closed');
             this.showNotification('Disconnected from host', 'error');
-            this.showScreen('lobby');
+            setTimeout(() => {
+                this.showScreen('lobby');
+            }, 2000);
+        });
+        
+        conn.on('error', (err) => {
+            console.error('[Peer] Connection error:', err);
+            this.showNotification('Failed to connect to game', 'error');
         });
         
         this.connections.set('host', conn);
     }
     
     handleConnection(conn) {
+        console.log('[Peer] Handling new connection:', conn.peer);
+        
         conn.on('open', () => {
-            console.log('Player connected:', conn.peer);
+            console.log('[Peer] Player connected:', conn.peer);
             this.connections.set(conn.peer, conn);
         });
         
         conn.on('data', (data) => {
+            console.log('[Peer] Data from player:', data);
             this.handleData(data, conn);
         });
         
         conn.on('close', () => {
-            console.log('Player disconnected:', conn.peer);
+            console.log('[Peer] Player disconnected:', conn.peer);
             this.connections.delete(conn.peer);
             this.state.players = this.state.players.filter(p => p.id !== conn.peer);
             this.broadcastState();
@@ -561,6 +743,8 @@ class Game {
     }
     
     handleData(data, conn) {
+        console.log('[Game] Handling data:', data.type);
+        
         switch (data.type) {
             case 'join':
                 if (this.state.isHost) {
@@ -568,6 +752,7 @@ class Game {
                         conn.send({ type: 'error', message: 'Game is full' });
                         return;
                     }
+                    console.log('[Game] Player joined:', data.player);
                     this.state.players.push(data.player);
                     this.broadcastState();
                     this.updateWaitingRoom();
@@ -624,8 +809,13 @@ class Game {
             screen: this.state.screen
         };
         
+        console.log('[Game] Broadcasting state:', stateData);
         this.connections.forEach(conn => {
-            conn.send(stateData);
+            try {
+                conn.send(stateData);
+            } catch (err) {
+                console.error('[Game] Failed to send to player:', err);
+            }
         });
     }
     
@@ -644,12 +834,18 @@ class Game {
             scenario: this.state.scenario
         };
         
+        console.log('[Game] Broadcasting game state:', gameState);
         this.connections.forEach(conn => {
-            conn.send(gameState);
+            try {
+                conn.send(gameState);
+            } catch (err) {
+                console.error('[Game] Failed to send game state:', err);
+            }
         });
     }
     
     syncGameState(data) {
+        console.log('[Game] Syncing game state:', data);
         this.state.currentRound = data.currentRound;
         this.state.currentPhase = data.currentPhase;
         this.state.boardState = data.boardState;
@@ -663,29 +859,40 @@ class Game {
     }
     
     updateWaitingRoom() {
+        console.log('[UI] Updating waiting room');
         const playerCount = this.state.players.length;
-        document.getElementById('player-count').textContent = playerCount;
+        const playerCountEl = document.getElementById('player-count');
+        
+        if (playerCountEl) {
+            playerCountEl.textContent = playerCount;
+        }
         
         const playersUl = document.getElementById('players-ul');
-        playersUl.innerHTML = this.state.players.map(p => `
-            <li class="${p.isHost ? 'is-host' : ''}">
-                <div class="player-avatar" style="background: ${p.character ? CHARACTERS.find(c => c.id === p.character)?.color : '#475569'}">
-                    ${p.character ? CHARACTERS.find(c => c.id === p.character)?.icon : p.name.charAt(0).toUpperCase()}
-                </div>
-                <span class="player-name">${p.name}</span>
-                <span class="player-status">${p.isHost ? 'Host' : 'Ready'}</span>
-            </li>
-        `).join('');
+        if (playersUl) {
+            playersUl.innerHTML = this.state.players.map(p => `
+                <li class="${p.isHost ? 'is-host' : ''}">
+                    <div class="player-avatar" style="background: ${p.character ? CHARACTERS.find(c => c.id === p.character)?.color : '#475569'}">
+                        <i class="${p.character ? CHARACTERS.find(c => c.id === p.character)?.icon : 'fa-solid fa-user'}"></i>
+                    </div>
+                    <span class="player-name">${p.name}</span>
+                    <span class="player-status">${p.isHost ? 'Host' : 'Ready'}</span>
+                </li>
+            `).join('');
+        }
         
         const startBtn = document.getElementById('start-game-btn');
-        const minPlayers = this.state.gameMode === 'solo' ? 1 : GAME_CONFIG.minPlayers;
-        startBtn.disabled = playerCount < minPlayers || !this.state.isHost;
-        startBtn.textContent = playerCount < minPlayers 
-            ? `Start Game (need ${minPlayers - playerCount} more)` 
-            : 'Start Game';
+        if (startBtn) {
+            const minPlayers = this.state.gameMode === 'solo' ? 1 : GAME_CONFIG.minPlayers;
+            startBtn.disabled = playerCount < minPlayers || !this.state.isHost;
+            startBtn.textContent = playerCount < minPlayers 
+                ? `Start Game (need ${minPlayers - playerCount} more)` 
+                : 'Start Game';
+        }
     }
     
     startGame() {
+        console.log('[Game] Starting game...');
+        
         if (!this.state.isHost) return;
         
         const scenario = SCENARIOS[Math.floor(Math.random() * SCENARIOS.length)];
@@ -702,14 +909,22 @@ class Game {
         };
         this.connections.forEach(conn => conn.send(startData));
         
+        console.log('[Game] Scenario selected:', scenario);
         this.showScreen('character-screen');
         this.renderCharacters();
     }
     
     leaveLobby() {
+        console.log('[Game] Leaving lobby');
+        
         if (this.peer) {
-            this.peer.destroy();
+            try {
+                this.peer.destroy();
+            } catch (err) {
+                console.error('[Peer] Error destroying peer:', err);
+            }
         }
+        
         this.connections.clear();
         this.state = {
             ...this.state,
@@ -722,7 +937,13 @@ class Game {
     }
     
     renderCharacters() {
+        console.log('[UI] Rendering characters');
         const grid = document.getElementById('characters-grid');
+        if (!grid) {
+            console.error('[UI] Characters grid not found');
+            return;
+        }
+        
         grid.innerHTML = CHARACTERS.map(char => {
             const isTaken = Object.values(this.state.characters).includes(char.id);
             const isSelected = this.state.characters[this.state.playerId] === char.id;
@@ -751,7 +972,10 @@ class Game {
     }
     
     selectCharacter(charId) {
+        console.log('[Game] Selecting character:', charId);
+        
         if (Object.values(this.state.characters).includes(charId)) {
+            console.log('[Game] Character already taken:', charId);
             return;
         }
         
@@ -778,6 +1002,8 @@ class Game {
     }
     
     confirmCharacter() {
+        console.log('[Game] Confirming character');
+        
         const myCharacter = this.state.characters[this.state.playerId];
         if (!myCharacter) {
             this.showNotification('Please select a character', 'error');
@@ -797,6 +1023,7 @@ class Game {
     }
     
     initBoardState() {
+        console.log('[Game] Initializing board state');
         this.state.boardState = {};
         SHARED_MODEL_FIELDS.forEach(field => {
             const isWeak = this.state.scenario?.weakFields.includes(field.id);
@@ -809,6 +1036,7 @@ class Game {
     }
     
     initViewpointDeck() {
+        console.log('[Game] Initializing viewpoint deck');
         this.state.viewpointDeck = [];
         
         VIEWPOINT_CARDS.holdsVision.forEach(card => {
@@ -835,6 +1063,7 @@ class Game {
     }
     
     drawCards(count) {
+        console.log('[Game] Drawing', count, 'cards');
         for (let i = 0; i < count && this.state.viewpointDeck.length > 0; i++) {
             this.state.playerHand.push(this.state.viewpointDeck.pop());
         }
@@ -843,6 +1072,11 @@ class Game {
     
     renderPlayerHand() {
         const handEl = document.getElementById('player-hand');
+        if (!handEl) {
+            console.error('[UI] Player hand element not found');
+            return;
+        }
+        
         handEl.innerHTML = this.state.playerHand.map((card, index) => `
             <div class="viewpoint-card ${card.type === 'thinksStrategically' ? 'strategic' : ''} ${this.state.selectedCard === index ? 'selected' : ''}"
                  onclick="game.selectCard(${index})">
@@ -854,6 +1088,7 @@ class Game {
     }
     
     selectCard(index) {
+        console.log('[Game] Selecting card:', index);
         this.state.selectedCard = this.state.selectedCard === index ? null : index;
         this.renderPlayerHand();
         
@@ -861,9 +1096,16 @@ class Game {
     }
     
     updateGameUI() {
-        document.getElementById('current-round').textContent = this.state.currentRound;
-        document.getElementById('current-phase').textContent = this.state.currentPhase;
-        document.getElementById('scenario-name').textContent = this.state.scenario?.name || 'No Scenario';
+        console.log('[UI] Updating game UI');
+        
+        const roundEl = document.getElementById('current-round');
+        if (roundEl) roundEl.textContent = this.state.currentRound;
+        
+        const phaseEl = document.getElementById('current-phase');
+        if (phaseEl) phaseEl.textContent = this.state.currentPhase;
+        
+        const scenarioEl = document.getElementById('scenario-name');
+        if (scenarioEl) scenarioEl.textContent = this.state.scenario?.name || 'No Scenario';
         
         this.renderBoard();
         this.renderTrackers();
@@ -875,6 +1117,11 @@ class Game {
     
     renderBoard() {
         const boardGrid = document.getElementById('board-grid');
+        if (!boardGrid) {
+            console.error('[UI] Board grid not found');
+            return;
+        }
+        
         boardGrid.innerHTML = '';
         
         const gridLayout = [
@@ -915,21 +1162,33 @@ class Game {
     renderTrackers() {
         const driftFill = document.getElementById('drift-fill');
         const driftValue = document.getElementById('drift-value');
-        driftFill.style.width = `${(this.state.visionDrift / 20) * 100}%`;
-        driftValue.textContent = this.state.visionDrift;
-        driftValue.className = `drift-value ${this.state.visionDrift <= 5 ? 'low' : this.state.visionDrift <= 10 ? 'medium' : 'high'}`;
+        
+        if (driftFill && driftValue) {
+            driftFill.style.width = `${(this.state.visionDrift / 20) * 100}%`;
+            driftValue.textContent = this.state.visionDrift;
+            driftValue.className = `drift-value ${this.state.visionDrift <= 5 ? 'low' : this.state.visionDrift <= 10 ? 'medium' : 'high'}`;
+        }
         
         const safetyFill = document.getElementById('safety-fill');
         const safetyValue = document.getElementById('safety-value');
-        safetyFill.style.width = `${this.state.psychologicalSafety}%`;
-        safetyValue.textContent = `${this.state.psychologicalSafety}%`;
+        
+        if (safetyFill && safetyValue) {
+            safetyFill.style.width = `${this.state.psychologicalSafety}%`;
+            safetyValue.textContent = `${this.state.psychologicalSafety}%`;
+        }
         
         const tokensDisplay = document.getElementById('tokens-display');
-        tokensDisplay.innerHTML = Array(this.state.alignmentTokens).fill('<div class="token"><i class="fa-solid fa-star"></i></div>').join('');
+        if (tokensDisplay) {
+            tokensDisplay.innerHTML = Array(this.state.alignmentTokens).fill('<div class="token"><i class="fa-solid fa-star"></i></div>').join('');
+        }
     }
     
     renderDisruption() {
         const disruptionCard = document.getElementById('disruption-card');
+        if (!disruptionCard) {
+            console.error('[UI] Disruption card element not found');
+            return;
+        }
         
         if (this.state.currentDisruption) {
             const d = this.state.currentDisruption;
@@ -946,7 +1205,7 @@ class Game {
     
     renderScenarioContext() {
         const detailsEl = document.getElementById('scenario-details');
-        if (this.state.scenario) {
+        if (detailsEl && this.state.scenario) {
             detailsEl.innerHTML = `
                 <p><strong>${this.state.scenario.name}</strong></p>
                 <p>${this.state.scenario.description}</p>
@@ -960,16 +1219,29 @@ class Game {
         const char = CHARACTERS.find(c => c.id === myCharId);
         
         if (char) {
-            document.getElementById('my-character').innerHTML = `<i class="${char.icon}"></i>`;
-            document.getElementById('my-character').style.background = char.color;
-            document.getElementById('my-name').textContent = this.state.playerName;
+            const myCharEl = document.getElementById('my-character');
+            const myNameEl = document.getElementById('my-name');
+            const useAbilityBtn = document.getElementById('use-ability-btn');
             
-            document.getElementById('use-ability-btn').disabled = false;
+            if (myCharEl) {
+                myCharEl.innerHTML = `<i class="${char.icon}"></i>`;
+                myCharEl.style.background = char.color;
+            }
+            
+            if (myNameEl) {
+                myNameEl.textContent = this.state.playerName;
+            }
+            
+            if (useAbilityBtn) {
+                useAbilityBtn.disabled = false;
+            }
         }
     }
     
     renderOtherPlayers() {
         const otherPlayersEl = document.getElementById('other-players');
+        if (!otherPlayersEl) return;
+        
         otherPlayersEl.innerHTML = this.state.players
             .filter(p => p.id !== this.state.playerId)
             .map(p => {
@@ -987,6 +1259,7 @@ class Game {
     }
     
     startRound() {
+        console.log('[Game] Starting round', this.state.currentRound);
         this.state.currentPhase = 'disruption';
         
         const disruption = DISRUPTIONS[Math.floor(Math.random() * DISRUPTIONS.length)];
@@ -1001,6 +1274,7 @@ class Game {
     }
     
     applyDisruption(disruption) {
+        console.log('[Game] Applying disruption:', disruption.name);
         disruption.targetFields.forEach(fieldId => {
             if (this.state.boardState[fieldId]?.protected) {
                 this.showNotification(`${fieldId} is protected from this disruption!`, 'success');
@@ -1039,6 +1313,7 @@ class Game {
     }
     
     applyCardEffect(card) {
+        console.log('[Game] Applying card effect:', card.name);
         const effect = card.effectCode;
         
         if (effect.restoreField) {
@@ -1141,19 +1416,26 @@ class Game {
     
     triggerStrategicPause() {
         const modal = document.getElementById('strategic-pause-modal');
-        modal.classList.add('active');
-        
-        const question = COACHING_PROMPTS[Math.floor(Math.random() * COACHING_PROMPTS.length)];
-        document.getElementById('coaching-question').textContent = question;
-        
-        const select = document.getElementById('restore-field-select');
-        select.innerHTML = Object.entries(this.state.boardState)
-            .filter(([id, state]) => !state.stable)
-            .map(([id, state]) => {
-                const field = SHARED_MODEL_FIELDS.find(f => f.id === id);
-                return `<option value="${id}">${field?.name || id}</option>`;
-            })
-            .join('');
+        if (modal) {
+            modal.classList.add('active');
+            
+            const question = COACHING_PROMPTS[Math.floor(Math.random() * COACHING_PROMPTS.length)];
+            const coachingQuestionEl = document.getElementById('coaching-question');
+            if (coachingQuestionEl) {
+                coachingQuestionEl.textContent = question;
+            }
+            
+            const select = document.getElementById('restore-field-select');
+            if (select) {
+                select.innerHTML = Object.entries(this.state.boardState)
+                    .filter(([id, state]) => !state.stable)
+                    .map(([id, state]) => {
+                        const field = SHARED_MODEL_FIELDS.find(f => f.id === id);
+                        return `<option value="${id}">${field?.name || id}</option>`;
+                    })
+                    .join('');
+            }
+        }
     }
     
     restoreField() {
@@ -1175,7 +1457,10 @@ class Game {
     }
     
     continueAfterPause() {
-        document.getElementById('strategic-pause-modal').classList.remove('active');
+        const modal = document.getElementById('strategic-pause-modal');
+        if (modal) {
+            modal.classList.remove('active');
+        }
         this.broadcastGameState();
         this.updateGameUI();
     }
@@ -1187,6 +1472,8 @@ class Game {
     }
     
     endRound() {
+        console.log('[Game] Ending round');
+        
         if (this.state.currentDisruption) {
             this.state.visionDrift += this.state.currentDisruption.driftImpact || 1;
         }
@@ -1220,6 +1507,8 @@ class Game {
     }
     
     endGame(completed) {
+        console.log('[Game] Ending game. Completed:', completed);
+        
         const won = completed && 
             this.state.visionDrift <= GAME_CONFIG.winConditions.maxVisionDrift &&
             this.countStableFields() >= GAME_CONFIG.winConditions.minStableFields &&
@@ -1255,6 +1544,8 @@ class Game {
     
     renderDebrief(won) {
         const resultEl = document.getElementById('game-result');
+        if (!resultEl) return;
+        
         resultEl.className = `game-result ${won ? 'victory' : 'defeat'}`;
         resultEl.innerHTML = `
             <h2>${won ? '<i class="fa-solid fa-trophy"></i> Victory!' : '<i class="fa-solid fa-cloud-rain"></i> Vision Collapsed'}</h2>
@@ -1276,37 +1567,41 @@ class Game {
         `;
         
         const achievementsEl = document.getElementById('achievements');
-        achievementsEl.innerHTML = `
-            ${this.state.achievements.visionKeeper ? `
-                <div class="achievement">
-                    <div class="icon"><i class="fa-solid fa-award"></i></div>
-                    <div class="title">Vision Keeper</div>
-                    <div class="player">${this.state.achievements.visionKeeper}</div>
-                </div>
-            ` : ''}
-            ${this.state.achievements.strategicEagle ? `
-                <div class="achievement">
-                    <div class="icon"><i class="fa-solid fa-eye"></i></div>
-                    <div class="title">Strategic Eagle</div>
-                    <div class="player">${this.state.achievements.strategicEagle}</div>
-                </div>
-            ` : ''}
-            ${this.state.achievements.bridgeBuilder ? `
-                <div class="achievement">
-                    <div class="icon"><i class="fa-solid fa-bridge"></i></div>
-                    <div class="title">Bridge Builder</div>
-                    <div class="player">${this.state.achievements.bridgeBuilder}</div>
-                </div>
-            ` : ''}
-        `;
+        if (achievementsEl) {
+            achievementsEl.innerHTML = `
+                ${this.state.achievements.visionKeeper ? `
+                    <div class="achievement">
+                        <div class="icon"><i class="fa-solid fa-award"></i></div>
+                        <div class="title">Vision Keeper</div>
+                        <div class="player">${this.state.achievements.visionKeeper}</div>
+                    </div>
+                ` : ''}
+                ${this.state.achievements.strategicEagle ? `
+                    <div class="achievement">
+                        <div class="icon"><i class="fa-solid fa-eye"></i></div>
+                        <div class="title">Strategic Eagle</div>
+                        <div class="player">${this.state.achievements.strategicEagle}</div>
+                    </div>
+                ` : ''}
+                ${this.state.achievements.bridgeBuilder ? `
+                    <div class="achievement">
+                        <div class="icon"><i class="fa-solid fa-bridge"></i></div>
+                        <div class="title">Bridge Builder</div>
+                        <div class="player">${this.state.achievements.bridgeBuilder}</div>
+                    </div>
+                ` : ''}
+            `;
+        }
         
         const questionsEl = document.getElementById('questions-list');
-        questionsEl.innerHTML = DEBRIEF_QUESTIONS.map(q => `
-            <div class="question-card">
-                <div class="category">${q.category}</div>
-                <div class="question">${q.question}</div>
-            </div>
-        `).join('');
+        if (questionsEl) {
+            questionsEl.innerHTML = DEBRIEF_QUESTIONS.map(q => `
+                <div class="question-card">
+                    <div class="category">${q.category}</div>
+                    <div class="question">${q.question}</div>
+                </div>
+            `).join('');
+        }
     }
     
     exportDebrief() {
@@ -1336,6 +1631,8 @@ class Game {
     }
     
     playAgain() {
+        console.log('[Game] Playing again');
+        
         this.state = {
             screen: 'lobby',
             isHost: false,
@@ -1371,7 +1668,11 @@ class Game {
         };
         
         if (this.peer) {
-            this.peer.destroy();
+            try {
+                this.peer.destroy();
+            } catch (err) {
+                console.error('[Peer] Error destroying peer:', err);
+            }
         }
         this.connections.clear();
         
@@ -1379,20 +1680,39 @@ class Game {
     }
     
     showScreen(screenId) {
+        console.log('[UI] Showing screen:', screenId);
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(`${screenId}-screen`).classList.add('active');
-        this.state.screen = screenId;
+        const targetScreen = document.getElementById(`${screenId}-screen`);
+        if (targetScreen) {
+            targetScreen.classList.add('active');
+            this.state.screen = screenId;
+        } else {
+            console.error('[UI] Screen not found:', screenId);
+        }
     }
     
     showHelp() {
-        document.getElementById('help-modal').classList.add('active');
+        const modal = document.getElementById('help-modal');
+        if (modal) {
+            modal.classList.add('active');
+        }
     }
     
     hideHelp() {
-        document.getElementById('help-modal').classList.remove('active');
+        const modal = document.getElementById('help-modal');
+        if (modal) {
+            modal.classList.remove('active');
+        }
     }
     
     showNotification(message, type = 'success') {
+        console.log('[Notification]', type.toUpperCase(), ':', message);
+        
+        const existing = document.querySelector('.notification');
+        if (existing) {
+            existing.remove();
+        }
+        
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
         notification.textContent = message;
@@ -1404,4 +1724,15 @@ class Game {
     }
 }
 
-const game = new Game();
+console.log('[Game] Script loaded, initializing...');
+
+let game;
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('[Game] DOM ready');
+        game = new Game();
+    });
+} else {
+    console.log('[Game] DOM already ready');
+    game = new Game();
+}
