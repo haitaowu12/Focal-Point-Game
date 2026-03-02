@@ -17,7 +17,7 @@ const CHARACTERS = [
     {
         id: 'visionary',
         name: 'The Visionary',
-        icon: '🎯',
+        icon: 'fa-solid fa-bullseye',
         disc: 'D/Di',
         color: '#ef4444',
         superpower: 'Restore Vision field immediately; +2 alignment tokens',
@@ -28,7 +28,7 @@ const CHARACTERS = [
     {
         id: 'catalyst',
         name: 'The Catalyst',
-        icon: '⚡',
+        icon: 'fa-solid fa-bolt',
         disc: 'iD',
         color: '#f59e0b',
         superpower: 'Energizes team; draw 2 extra Viewpoint Cards this round',
@@ -39,7 +39,7 @@ const CHARACTERS = [
     {
         id: 'anchor',
         name: 'The Anchor',
-        icon: '⚓',
+        icon: 'fa-solid fa-anchor',
         disc: 'S/Si',
         color: '#10b981',
         superpower: 'Prevents Vision Drift during 1 round; +1 governance token',
@@ -50,7 +50,7 @@ const CHARACTERS = [
     {
         id: 'analyst',
         name: 'The Analyst',
-        icon: '🔍',
+        icon: 'fa-solid fa-magnifying-glass-chart',
         disc: 'C/CS',
         color: '#3b82f6',
         superpower: 'Audit Shared Model for free; reveal hidden Disruption effects',
@@ -61,7 +61,7 @@ const CHARACTERS = [
     {
         id: 'connector',
         name: 'The Connector',
-        icon: '🤝',
+        icon: 'fa-solid fa-handshake',
         disc: 'iS',
         color: '#8b5cf6',
         superpower: 'Bridge internal/external stakeholder fields; bonus collaboration tokens',
@@ -72,7 +72,7 @@ const CHARACTERS = [
     {
         id: 'strategist',
         name: 'The Strategist',
-        icon: '♟️',
+        icon: 'fa-solid fa-chess',
         disc: 'DC',
         color: '#6366f1',
         superpower: 'Lock one Shared Model field per round from disruption',
@@ -103,7 +103,7 @@ const VIEWPOINT_CARDS = {
         {
             id: 'thinkingAhead',
             name: 'Thinking Ahead',
-            icon: '🔭',
+            icon: 'fa-solid fa-telescope',
             description: 'I see the implication 2 steps forward',
             effect: 'Prevents 1 future Disruption Card from being drawn',
             effectCode: { preventDisruption: 1 }
@@ -111,7 +111,7 @@ const VIEWPOINT_CARDS = {
         {
             id: 'bigPicture',
             name: 'Big Picture Lens',
-            icon: '🗺️',
+            icon: 'fa-solid fa-map',
             description: 'Let me reframe this in terms of our overall goal',
             effect: 'Restores 1 drifted Shared Model field',
             effectCode: { restoreField: 1 }
@@ -119,7 +119,7 @@ const VIEWPOINT_CARDS = {
         {
             id: 'ownsModel',
             name: 'Owns the Mental Model',
-            icon: '🧠',
+            icon: 'fa-solid fa-brain',
             description: 'Here is how I understand our shared reality',
             effect: 'Team alignment check; all players verify Vision and Scope understanding',
             effectCode: { alignmentCheck: true }
@@ -127,7 +127,7 @@ const VIEWPOINT_CARDS = {
         {
             id: 'sharesModel',
             name: 'Shares the Mental Model',
-            icon: '👥',
+            icon: 'fa-solid fa-users',
             description: 'Let me communicate this to stakeholders',
             effect: 'Activates stakeholder field; earns bonus alignment tokens',
             effectCode: { activateStakeholder: true, bonusTokens: 1 }
@@ -137,7 +137,7 @@ const VIEWPOINT_CARDS = {
         {
             id: 'holistic',
             name: 'Holistic / Systemic',
-            icon: '🌐',
+            icon: 'fa-solid fa-globe',
             description: 'Connect the dots across the system',
             effect: 'Connects two drifted fields; restores both partially',
             effectCode: { connectFields: 2, partialRestore: true }
@@ -145,7 +145,7 @@ const VIEWPOINT_CARDS = {
         {
             id: 'lifeCycle',
             name: 'Life Cycle Focused',
-            icon: '🔄',
+            icon: 'fa-solid fa-arrows-rotate',
             description: 'Consider the full lifecycle',
             effect: 'Prevents Strategy field from drifting for 2 rounds',
             effectCode: { protectField: 'strategy', duration: 2 }
@@ -153,7 +153,7 @@ const VIEWPOINT_CARDS = {
         {
             id: 'balancing',
             name: 'Balancing Views',
-            icon: '⚖️',
+            icon: 'fa-solid fa-scale-balanced',
             description: 'Balance competing perspectives',
             effect: 'Resolves conflict between two players',
             effectCode: { resolveConflict: true }
@@ -161,7 +161,7 @@ const VIEWPOINT_CARDS = {
         {
             id: 'resultsDriven',
             name: 'Results Driven',
-            icon: '🎯',
+            icon: 'fa-solid fa-bullseye',
             description: 'Focus on outcomes',
             effect: 'Converts alignment token into KPI milestone',
             effectCode: { tokenToKpi: true }
@@ -169,7 +169,7 @@ const VIEWPOINT_CARDS = {
         {
             id: 'patient',
             name: 'Patient / Clear Minded',
-            icon: '🧘',
+            icon: 'fa-solid fa-spa',
             description: 'Stay calm under pressure',
             effect: 'Negates a high-pressure Disruption Card effect',
             effectCode: { negateDisruption: true }
@@ -181,7 +181,7 @@ const SCENARIOS = [
     {
         id: 'skytrain',
         name: 'SkyTrain Expansion',
-        icon: '🚇',
+        icon: 'fa-solid fa-train-subway',
         description: 'A multi-year rail infrastructure upgrade. Sponsors want phase 2 to begin before phase 1 is stable.',
         context: 'Major transit expansion project with political pressure to accelerate delivery.',
         weakFields: ['vision', 'scope', 'successCriteria', 'kpis'],
@@ -195,7 +195,7 @@ const SCENARIOS = [
     {
         id: 'uav',
         name: 'UAV Platform Development',
-        icon: '🛸',
+        icon: 'fa-solid fa-helicopter',
         description: 'Engineering team building a reusable UAV platform across UK and US offices.',
         context: 'Cross-national development with distributed teams and regulatory challenges.',
         weakFields: ['internalStakeholders', 'externalStakeholders', 'resourcesKnowledge', 'logisticalConstraints'],
@@ -208,7 +208,7 @@ const SCENARIOS = [
     {
         id: 'digital',
         name: 'Digital Transformation Initiative',
-        icon: '💻',
+        icon: 'fa-solid fa-laptop-code',
         description: 'Enterprise migration project where leadership is divided on scope.',
         context: 'Legacy system modernization with competing stakeholder priorities.',
         weakFields: ['strategy', 'teamGovernance', 'rationale', 'responsibleAccountable'],
@@ -221,7 +221,7 @@ const SCENARIOS = [
     {
         id: 'erebor',
         name: 'The Erebor Project',
-        icon: '🏔️',
+        icon: 'fa-solid fa-mountain',
         description: 'A classic fictional scenario: Reclaiming and restoring an ancient mountain stronghold.',
         context: 'Epic quest with diverse stakeholders (dwarves, dragons, local communities).',
         weakFields: ['vision', 'externalStakeholders', 'logisticalConstraints', 'successCriteria'],
@@ -238,7 +238,7 @@ const DISRUPTIONS = [
     {
         id: 'deliverableCrisis',
         name: 'Deliverable Crisis',
-        icon: '🔥',
+        icon: 'fa-solid fa-fire',
         description: 'The sprint demo is tomorrow. Remove the Strategy token.',
         effect: 'Remove Strategy token or Vision Drift +2',
         targetFields: ['strategy'],
@@ -247,7 +247,7 @@ const DISRUPTIONS = [
     {
         id: 'stakeholderRotation',
         name: 'Stakeholder Rotation',
-        icon: '🔀',
+        icon: 'fa-solid fa-shuffle',
         description: 'A new executive sponsor arrives. Internal Stakeholder Context is unclear.',
         effect: 'Flip Internal Stakeholder Context face-down until briefed',
         targetFields: ['internalStakeholders'],
@@ -256,7 +256,7 @@ const DISRUPTIONS = [
     {
         id: 'budgetCut',
         name: 'Budget Cut (20%)',
-        icon: '💸',
+        icon: 'fa-solid fa-money-bill-wave',
         description: 'Budget reduced by 20%. Logistical Constraints and KPIs affected.',
         effect: 'Remove Logistical Constraints and KPI tokens; renegotiate Scope or lose 3 alignment tokens',
         targetFields: ['logisticalConstraints', 'kpis'],
@@ -265,7 +265,7 @@ const DISRUPTIONS = [
     {
         id: 'conflictingInterpretations',
         name: 'Conflicting Interpretations',
-        icon: '🤯',
+        icon: 'fa-solid fa-face-dizzy',
         description: 'Team members have different understandings of Success Criteria.',
         effect: 'Two players must reveal understanding; if different, Vision Drift +3',
         targetFields: ['successCriteria'],
@@ -274,7 +274,7 @@ const DISRUPTIONS = [
     {
         id: 'keyPersonDeparture',
         name: 'Key Person Departure',
-        icon: '🚪',
+        icon: 'fa-solid fa-person-walking-arrow-right',
         description: 'Critical team member leaves. Responsible/Accountable unclear.',
         effect: 'Remove Responsible/Accountable token; one player sacrifices a Viewpoint Card',
         targetFields: ['responsibleAccountable'],
@@ -283,7 +283,7 @@ const DISRUPTIONS = [
     {
         id: 'scopeCreep',
         name: 'Scope Creep Email',
-        icon: '📬',
+        icon: 'fa-solid fa-envelope-open-text',
         description: 'External stakeholder requests major feature change.',
         effect: 'Scope field contested; team must vote to accept or reject',
         targetFields: ['scope'],
@@ -292,7 +292,7 @@ const DISRUPTIONS = [
     {
         id: 'technicalDebt',
         name: 'Technical Debt Crisis',
-        icon: '🔧',
+        icon: 'fa-solid fa-screwdriver-wrench',
         description: 'Accumulated technical debt threatens delivery timeline.',
         effect: 'Resources & Knowledge field degrades; Strategy at risk',
         targetFields: ['resourcesKnowledge', 'strategy'],
@@ -301,7 +301,7 @@ const DISRUPTIONS = [
     {
         id: 'regulatoryChange',
         name: 'Regulatory Change',
-        icon: '📋',
+        icon: 'fa-solid fa-clipboard-list',
         description: 'New regulations require immediate compliance review.',
         effect: 'External Stakeholder Context changes; Success Criteria may need update',
         targetFields: ['externalStakeholders', 'successCriteria'],
@@ -310,7 +310,7 @@ const DISRUPTIONS = [
     {
         id: 'teamConflict',
         name: 'Team Conflict',
-        icon: '⚔️',
+        icon: 'fa-solid fa-people-arrows',
         description: 'Interpersonal conflict affecting team collaboration.',
         effect: 'Psychological Safety decreases; Team Governance at risk',
         targetFields: ['teamGovernance'],
@@ -320,7 +320,7 @@ const DISRUPTIONS = [
     {
         id: 'vendorDelay',
         name: 'Vendor Delay',
-        icon: '📦',
+        icon: 'fa-solid fa-truck',
         description: 'Critical vendor delivery delayed by 4 weeks.',
         effect: 'Logistical Constraints affected; may impact KPIs',
         targetFields: ['logisticalConstraints', 'kpis'],
@@ -730,8 +730,11 @@ class Game {
             return `
                 <div class="character-card ${isTaken ? 'taken' : ''} ${isSelected ? 'selected' : ''}" 
                      data-character="${char.id}"
+                     style="--character-color: ${char.color}"
                      onclick="game.selectCharacter('${char.id}')">
-                    <div class="character-icon">${char.icon}</div>
+                    <div class="character-icon" style="background: ${char.color}">
+                        <i class="${char.icon}"></i>
+                    </div>
                     <div class="character-name">${char.name}</div>
                     <div class="character-disc">${char.disc}</div>
                     <div class="character-ability">
@@ -843,7 +846,7 @@ class Game {
         handEl.innerHTML = this.state.playerHand.map((card, index) => `
             <div class="viewpoint-card ${card.type === 'thinksStrategically' ? 'strategic' : ''} ${this.state.selectedCard === index ? 'selected' : ''}"
                  onclick="game.selectCard(${index})">
-                <div class="card-icon">${card.icon}</div>
+                <div class="card-icon"><i class="${card.icon}"></i></div>
                 <div class="card-title">${card.name}</div>
                 <div class="card-desc">${card.description}</div>
             </div>
@@ -899,7 +902,7 @@ class Game {
                 fieldEl.innerHTML = `
                     <div class="field-name">${field.name}</div>
                     <div class="field-token ${state?.stable ? '' : state?.token ? 'drifting' : 'collapsed'}">
-                        ${state?.stable ? '✓' : state?.token ? '!' : '✗'}
+                        <i class="${state?.stable ? 'fa-solid fa-check' : state?.token ? 'fa-solid fa-exclamation' : 'fa-solid fa-xmark'}"></i>
                     </div>
                     ${isWeak ? '<div class="field-details">Weak field - needs attention</div>' : ''}
                 `;
@@ -922,7 +925,7 @@ class Game {
         safetyValue.textContent = `${this.state.psychologicalSafety}%`;
         
         const tokensDisplay = document.getElementById('tokens-display');
-        tokensDisplay.innerHTML = Array(this.state.alignmentTokens).fill('<div class="token">★</div>').join('');
+        tokensDisplay.innerHTML = Array(this.state.alignmentTokens).fill('<div class="token"><i class="fa-solid fa-star"></i></div>').join('');
     }
     
     renderDisruption() {
@@ -931,7 +934,7 @@ class Game {
         if (this.state.currentDisruption) {
             const d = this.state.currentDisruption;
             disruptionCard.innerHTML = `
-                <div class="card-icon">${d.icon}</div>
+                <div class="card-icon"><i class="${d.icon}"></i></div>
                 <div class="card-title">${d.name}</div>
                 <div class="card-effect">${d.description}</div>
             `;
@@ -957,7 +960,7 @@ class Game {
         const char = CHARACTERS.find(c => c.id === myCharId);
         
         if (char) {
-            document.getElementById('my-character').innerHTML = char.icon;
+            document.getElementById('my-character').innerHTML = `<i class="${char.icon}"></i>`;
             document.getElementById('my-character').style.background = char.color;
             document.getElementById('my-name').textContent = this.state.playerName;
             
@@ -974,7 +977,7 @@ class Game {
                 return `
                     <div class="other-player">
                         <div class="avatar" style="background: ${char?.color || '#475569'}">
-                            ${char?.icon || p.name.charAt(0)}
+                            <i class="${char?.icon || 'fa-solid fa-user'}"></i>
                         </div>
                         <div class="name">${p.name}</div>
                         <div class="cards-count">3 cards</div>
@@ -1254,7 +1257,7 @@ class Game {
         const resultEl = document.getElementById('game-result');
         resultEl.className = `game-result ${won ? 'victory' : 'defeat'}`;
         resultEl.innerHTML = `
-            <h2>${won ? '🎉 Victory!' : '😔 Vision Collapsed'}</h2>
+            <h2>${won ? '<i class="fa-solid fa-trophy"></i> Victory!' : '<i class="fa-solid fa-cloud-rain"></i> Vision Collapsed'}</h2>
             <p>${won ? 'Your team successfully held the vision!' : 'The team lost strategic alignment.'}</p>
             <div class="stats">
                 <div class="stat">
@@ -1276,21 +1279,21 @@ class Game {
         achievementsEl.innerHTML = `
             ${this.state.achievements.visionKeeper ? `
                 <div class="achievement">
-                    <div class="icon">🏆</div>
+                    <div class="icon"><i class="fa-solid fa-award"></i></div>
                     <div class="title">Vision Keeper</div>
                     <div class="player">${this.state.achievements.visionKeeper}</div>
                 </div>
             ` : ''}
             ${this.state.achievements.strategicEagle ? `
                 <div class="achievement">
-                    <div class="icon">🔭</div>
+                    <div class="icon"><i class="fa-solid fa-eye"></i></div>
                     <div class="title">Strategic Eagle</div>
                     <div class="player">${this.state.achievements.strategicEagle}</div>
                 </div>
             ` : ''}
             ${this.state.achievements.bridgeBuilder ? `
                 <div class="achievement">
-                    <div class="icon">🤝</div>
+                    <div class="icon"><i class="fa-solid fa-bridge"></i></div>
                     <div class="title">Bridge Builder</div>
                     <div class="player">${this.state.achievements.bridgeBuilder}</div>
                 </div>
