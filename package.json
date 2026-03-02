@@ -1,0 +1,23 @@
+{
+  "name": "focal-point-game",
+  "version": "1.0.0",
+  "description": "A static browser game for leadership training built around the Cohort 9 Shared Model. This rebuild focuses on deterministic state transitions, reliable hot-seat multiplayer, and GitHub Pages hosting.",
+  "main": "game.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/haitaowu12/Focal-Point-Game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/haitaowu12/Focal-Point-Game/issues"
+  },
+  "homepage": "https://github.com/haitaowu12/Focal-Point-Game#readme",
+  "devDependencies": {
+    "playwright": "^1.58.2"
+  }
+}

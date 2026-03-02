@@ -1,66 +1,62 @@
 # FOCAL POINT: Hold the Vision
 
-*A gamified leadership training tool for systems engineers and technical leaders*
+A static browser game for leadership training built around the Cohort 9 Shared Model. This rebuild focuses on deterministic state transitions, reliable hot-seat multiplayer, and GitHub Pages hosting.
 
-**Tagline:** *"When the pressure is on, can you hold the vision?"*
+## Phase 1 Features
 
-## Overview
+- Single-player and hot-seat multiplayer (1-6 local players)
+- Full 13-field Shared Model board with stability states (`stable`, `drifting`, `collapsed`)
+- Character selection with unique roles and blind spot hooks
+- Disruption + viewpoint card round loop across 5 rounds
+- Strategic Pause mechanic when Vision Drift reaches threshold
+- Debrief outcome evaluation and event timeline
+- Save/load via `localStorage`
+- Test hooks: `window.render_game_to_text()` and `window.advanceTime(ms)`
 
-FOCAL POINT is a multiplayer web-based game that trains systems engineers and technical leaders to build, hold, and share their vision using the Shared Model framework. Players navigate realistic project scenarios while managing Vision Drift and maintaining Psychological Safety.
+## Architecture
 
-## Features
+- `index.html`: static shell
+- `styles.css`: responsive UI + board styling
+- `src/data/*.js`: game content data
+- `src/state.js`: `GameState`, action constants, pure reducer
+- `src/rules.js`: `applyDisruption`, `applyCardEffect`, `evaluateWin`
+- `src/render.js`: pure render functions
+- `src/controller.js`: event wiring + dispatch
+- `src/storage.js`: local persistence
+- `src/main.js`: bootstrap and test hooks
 
-- **Multiplayer Support**: 3-6 players in real-time via WebRTC
-- **6 Character Cards**: DiSC-based leadership styles with unique abilities
-- **13-Field Shared Model Board**: Interactive game board with Vision Stability Tokens
-- **Viewpoint Cards**: 9 card types mapped to INCOSE TLI framework
-- **Scenario Cards**: 4 realistic project scenarios
-- **Disruption Cards**: 10+ disruption types simulating delivery pressure
-- **Vision Drift Tracker**: 0-20 point gauge for organizational misalignment
-- **Strategic Pause Mechanic**: Key learning loop for returning to strategic thinking
-- **Psychological Safety Track**: Secondary scoring for team environment
+## Local Run
 
-## Play Online
-
-Visit: [https://tony.github.io/focal-point-game](https://tony.github.io/focal-point-game)
-
-## How to Play
-
-1. **Create or Join**: Host creates a game and shares the code with other players
-2. **Select Character**: Choose your DiSC-based leadership style
-3. **Draw Scenario**: Get your project context with pre-filled Shared Model
-4. **Play Rounds**: Navigate 5 rounds of disruptions using Viewpoint Cards
-5. **Hold the Vision**: Keep Vision Drift low and Psychological Safety high
-6. **Debrief**: Reflect on lessons learned
-
-## Game Modes
-
-- **Solo Mode**: 1 player + facilitator (45 min)
-- **Team Play**: 3-6 players (90-120 min)
-- **Parallel Teams**: 2 teams competing (120+ min)
-
-## Technical Stack
-
-- Pure HTML5, CSS3, JavaScript (no build required)
-- PeerJS for WebRTC peer-to-peer connections
-- Deployable to GitHub Pages
-
-## Development
+No build step is required.
 
 ```bash
-# Clone the repository
-git clone https://github.com/tony/focal-point-game.git
-
-# Open in browser
-open index.html
+cd /Users/tony/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/Second\ Brain/01-Projects/focal-point-game
+python3 -m http.server 5173
 ```
 
-## License
+Open [http://localhost:5173](http://localhost:5173).
 
-MIT License - See [LICENSE](LICENSE) for details.
+## GitHub Pages Deployment
 
-## Credits
+This repo includes `.github/workflows/deploy-pages.yml`.
 
-- Based on the Cohort 9 Shared Model
-- INCOSE Technical Leadership Institute competency framework
-- DiSC leadership styles from Cohort 8
+### One-time setup in GitHub
+
+1. Go to `Settings -> Pages`.
+2. Under `Build and deployment`, set `Source` to `GitHub Actions`.
+3. Push to `main`.
+
+The workflow publishes the static site from the repo root.
+
+## Controls and Flow
+
+1. Add players and start character selection.
+2. Choose unique characters.
+3. Start round -> draw disruption -> active player responses.
+4. End turns for all players -> resolve disruption.
+5. Handle strategic pause if triggered.
+6. Proceed to next round until debrief.
+
+## Future Extension
+
+Real-time online multiplayer is intentionally deferred. The current reducer/action model is structured so an authoritative network adapter can be added later without rewriting core rules.
