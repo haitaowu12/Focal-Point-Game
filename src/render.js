@@ -43,11 +43,15 @@ const DISC_TYPES = {
 function renderGauge(label, value, max, tone = "brand") {
   const pct = Math.max(0, Math.min(100, Math.round((value / max) * 100)));
   return `
-    <div class="gauge-card">
-      <label>${label}</label>
-      <strong>${value}${label === "Psych Safety" ? "%" : ""}</strong>
+    <div class="gauge-card ${tone}">
+      <div class="gauge-header">
+        <label>${label}</label>
+        <strong>${value}${label === "Psych Safety" ? "%" : ""}</strong>
+      </div>
       <div class="gauge-track">
-        <div class="gauge-fill ${tone}" style="width:${pct}%"></div>
+        <div class="gauge-fill" style="width:${pct}%">
+          <div class="scanline"></div>
+        </div>
       </div>
     </div>
   `;
@@ -65,43 +69,51 @@ function renderErrorBanner(state) {
 
 function renderLobby(state) {
   return `
-    <section class="panel">
-      <h1>FOCAL POINT: Hold the Vision</h1>
-      <p class="mission-copy">A leadership simulation game about staying aligned when pressure hits.</p>
-      <div class="intro-grid">
-        <article class="intro-card">
-          <h3>Mission</h3>
-          <p>Protect the 13-field Shared Model through disruptions and finish with low Vision Drift.</p>
-        </article>
-        <article class="intro-card">
-          <h3>How A Round Works</h3>
-          <ol>
-            <li>Draw disruption</li>
-            <li>Players respond with cards/abilities</li>
-            <li>Resolve impact and continue</li>
-          </ol>
-        </article>
-        <article class="intro-card">
-          <h3>Win Conditions</h3>
-          <p>Vision Drift ≤ 8, at least 10 stable fields, Psychological Safety ≥ 50%.</p>
-        </article>
+    <section class="panel lobby-panel">
+      <div class="lobby-header">
+        <h3 class="mission-tag">STRATEGIC SIMULATION</h3>
+        <h1>FOCAL POINT</h1>
+        <h2>[ MISSION HOLD_THE_VISION ]</h2>
       </div>
-      <div class="row">
-        <button class="btn" data-action="add-player">Add Player</button>
-        <button class="btn btn-primary" data-action="start-game">Start Character Selection</button>
+      
+      <div class="mission-briefing">
+        <div class="briefing-card">
+          <label>01 OBJECTIVE</label>
+          <p>Protect the 13-field Shared Model from systemic entropy. Maintain Vision Drift within acceptable operational limits.</p>
+        </div>
+        <div class="briefing-card">
+          <label>02 OPERATIONAL FLOW</label>
+          <p>Identify Disruption → Coordinate Response → Mitigate Impact → Re-align Strategy.</p>
+        </div>
+        <div class="briefing-card">
+          <label>03 SUCCESS CRITERIA</label>
+          <ul class="criteria-list">
+            <li>Vision Drift ≤ ${GAME_CONFIG.winConditions.maxVisionDrift}</li>
+            <li>Stable Sectors ≥ ${GAME_CONFIG.winConditions.minStableFields}</li>
+            <li>Psych Safety ≥ ${GAME_CONFIG.winConditions.minPsychologicalSafety}%</li>
+          </ul>
+        </div>
       </div>
-      <div class="stack">
-        ${state.players
-          .map(
-            (p, idx) => `
-          <div class="player-row">
-            <label>Player ${idx + 1}</label>
-            <input type="text" value="${escapeHtml(p.name)}" data-action="rename-player" data-player-id="${p.id}" />
-            ${state.players.length > GAME_CONFIG.minPlayers ? `<button class="btn btn-ghost" data-action="remove-player" data-player-id="${p.id}">Remove</button>` : ""}
-          </div>
-        `,
-          )
-          .join("")}
+
+      <div class="deployment-console">
+        <h3>ACTIVE PERSONNEL</h3>
+        <div class="player-stack">
+          ${state.players
+            .map(
+              (p, idx) => `
+            <div class="deployment-row">
+              <span class="unit-id">UNIT ${String(idx + 1).padStart(2, "0")}</span>
+              <input type="text" value="${escapeHtml(p.name)}" data-action="rename-player" data-player-id="${p.id}" class="tactical-input" />
+              ${state.players.length > GAME_CONFIG.minPlayers ? `<button class="btn btn-ghost btn-tiny" data-action="remove-player" data-player-id="${p.id}">DISCHARGE</button>` : ""}
+            </div>
+          `,
+            )
+            .join("")}
+        </div>
+        <div class="console-actions">
+          <button class="btn btn-ghost" data-action="add-player">ENLIST PERSONNEL</button>
+          <button class="btn btn-primary btn-large" data-action="start-game">INITIALIZE MISSION</button>
+        </div>
       </div>
     </section>
   `;
@@ -220,44 +232,56 @@ function renderBackButton(currentScreen) {
 
 function renderCharacterSelection(state) {
   return `
-    <section class="panel">
+    <section class="panel assembly-panel">
       <div class="screen-header">
-        ${renderBackButton(state.screen)}
-        <h1>Character Selection</h1>
+        <h3 class="mission-tag">MISSION PARAMETERS</h3>
+        <h1>TEAM ASSEMBLY</h1>
+        <p class="subtle">Assign strategic roles to deployed personnel. Unique Specializations required.</p>
       </div>
-      <p>Each player must choose one unique character.</p>
-      ${state.players
-        .map((p) => {
-          const selected = p.characterId ? getCharacterById(p.characterId) : null;
-          return `
-            <div class="player-character-block">
-              <h3>${escapeHtml(p.name)} ${selected ? `- ${selected.name}` : ""}</h3>
-              <div class="characters-grid">
-                ${CHARACTERS.map((c) => {
-                  const takenBy = state.players.find((x) => x.characterId === c.id && x.id !== p.id);
-                  const isSelected = p.characterId === c.id;
-                  return `
-                    <button class="character-card ${isSelected ? "selected" : ""} ${takenBy ? "taken" : ""}"
-                      data-action="select-character"
-                      data-player-id="${p.id}"
-                      data-character-id="${c.id}"
-                      ${takenBy ? "disabled" : ""}
-                    >
-                      <strong>${c.name}</strong>
-                      <span>${c.disc}</span>
-                      <small>${c.superpower}</small>
-                      <small>Blind spot: ${c.blindspot}</small>
-                    </button>
-                  `;
-                }).join("")}
+
+      <div class="assembly-grid">
+        ${state.players
+          .map((p, idx) => {
+            const selected = p.characterId ? getCharacterById(p.characterId) : null;
+            return `
+              <div class="personnel-block">
+                <div class="personnel-header">
+                  <span class="unit-id">UNIT ${String(idx + 1).padStart(2, "0")}</span>
+                  <h2>${escapeHtml(p.name)}</h2>
+                </div>
+                <div class="specialization-grid">
+                  ${CHARACTERS.map((c) => {
+                    const takenBy = state.players.find((x) => x.characterId === c.id && x.id !== p.id);
+                    const isSelected = p.characterId === c.id;
+                    return `
+                      <button class="spec-card ${isSelected ? "selected" : ""} ${takenBy ? "taken" : ""}"
+                        data-action="select-character"
+                        data-player-id="${p.id}"
+                        data-character-id="${c.id}"
+                        ${takenBy ? "disabled" : ""}
+                      >
+                        <div class="spec-info">
+                          <strong class="spec-name">${c.name}</strong>
+                          <span class="spec-disc">${c.disc}</span>
+                        </div>
+                        <div class="spec-power">${c.superpower}</div>
+                        <div class="spec-logic-scan">
+                          <div class="scan-line"></div>
+                          <small>BLIND SPOT: ${c.blindspot}</small>
+                        </div>
+                      </button>
+                    `;
+                  }).join("")}
+                </div>
               </div>
-            </div>
-          `;
-        })
-        .join("")}
-      <div class="row">
-        <button class="btn btn-ghost" data-action="show-disc-guide">DISC Guide</button>
-        <button class="btn btn-primary" data-action="start-round" ${state.players.some((p) => !p.characterId) ? "disabled" : ""}>Start Round 1</button>
+            `;
+          })
+          .join("")}
+      </div>
+
+      <div class="console-actions">
+        <button class="btn btn-ghost" data-action="show-disc-guide">OPEN DISC PROTOCOLS</button>
+        <button class="btn btn-primary btn-large" data-action="start-round" ${state.players.some((p) => !p.characterId) ? "disabled" : ""}>LAUNCH SIMULATION</button>
       </div>
     </section>
   `;
@@ -270,67 +294,49 @@ function renderFieldOptions(state, onlyStakeholders = false) {
     .join("");
 }
 
-function renderDiscGuideModal(onClose) {
+function renderDiscGuideModal() {
   const discOrder = ["D", "i", "S", "C"];
   
   return `
     <div class="modal-overlay" data-action="close-disc-guide">
-      <div class="disc-guide-modal" onclick="event.stopPropagation()">
-        <div class="disc-guide-modal-header">
-          <h2>DISC Behavioral Model</h2>
-          <p>Understanding team members' behavioral preferences and communication styles.</p>
+      <div class="disc-guide-modal active" onclick="event.stopPropagation()">
+        <div class="modal-tactical-header">
+          <div class="modal-title-group">
+            <h3>REFERENCE PROTOCOL</h3>
+            <h2>DISC BEHAVIORAL MODEL</h2>
+          </div>
         </div>
-        <div class="disc-guide-modal-body">
+        <div class="disc-guide-body">
           <div class="disc-quadrants">
             ${discOrder.map((type) => {
               const disc = DISC_TYPES[type];
               return `
-                <div class="disc-quadrant" style="border-left-color: ${disc.color}">
-                  <div class="disc-quadrant-header" style="background: ${disc.color}20">
-                    <h3 style="color: ${disc.color}">${type}: ${disc.name}</h3>
+                <div class="disc-sector" style="--sector-color: ${disc.color}">
+                  <div class="sector-header">
+                    <span class="sector-type">${type}</span>
+                    <span class="sector-name">${disc.name}</span>
                   </div>
-                  <div class="disc-content">
-                    <div class="disc-section">
-                      <h4>Traits</h4>
-                      <ul>
-                        ${disc.traits.map((t) => `<li>${t}</li>`).join("")}
-                      </ul>
+                  <div class="sector-content">
+                    <div class="trait-block">
+                      <label>TRAITS</label>
+                      <p>${disc.traits.join(" • ")}</p>
                     </div>
-                    <div class="disc-section">
-                      <h4>Strengths</h4>
-                      <ul>
-                        ${disc.strengths.map((s) => `<li>${s}</li>`).join("")}
-                      </ul>
+                    <div class="trait-block">
+                      <label>STRENGTHS</label>
+                      <p>${disc.strengths.join(" • ")}</p>
                     </div>
-                    <div class="disc-section">
-                      <h4>Blind Spots</h4>
-                      <ul>
-                        ${disc.blindSpots.map((b) => `<li>${b}</li>`).join("")}
-                      </ul>
+                    <div class="trait-block danger">
+                      <label>BLIND SPOTS</label>
+                      <p>${disc.blindSpots.join(" • ")}</p>
                     </div>
                   </div>
                 </div>
               `;
             }).join("")}
           </div>
-          <div class="disc-character-mapping">
-            <h3>Characters & DISC Types</h3>
-            <div class="character-disc-grid">
-              ${CHARACTERS.map((c) => {
-                const disc = DISC_TYPES[c.disc.split("/")[0]] || DISC_TYPES[c.disc[0]];
-                return `
-                  <div class="character-disc-card" style="border-top-color: ${disc.color}">
-                    <strong style="color: ${disc.color}">${c.name}</strong>
-                    <span class="disc-badge" style="background: ${disc.color}">${c.disc}</span>
-                    <small>${c.superpower}</small>
-                  </div>
-                `;
-              }).join("")}
-            </div>
-          </div>
         </div>
-        <div class="disc-guide-modal-footer">
-          <button class="btn btn-primary btn-block" data-action="close-disc-guide">Close</button>
+        <div class="modal-footer">
+          <button class="btn btn-primary btn-block" data-action="close-disc-guide">Acknowledge Reference</button>
         </div>
       </div>
     </div>
@@ -342,18 +348,22 @@ function renderConfirmationDialog(confirmation) {
   
   return `
     <div class="modal-overlay" data-action="close-confirmation">
-      <div class="confirmation-modal" onclick="event.stopPropagation()">
-        <div class="confirmation-modal-header">
-          <span class="confirmation-icon">⚠️</span>
-          <h2>Confirm Action</h2>
+      <div class="confirmation-modal active" onclick="event.stopPropagation()">
+        <div class="modal-tactical-header">
+          <div class="modal-title-group">
+            <h3>USER ACTION REQUIRED</h3>
+            <h2>CONFIRM PROTOCOL</h2>
+          </div>
         </div>
-        <div class="confirmation-modal-body">
-          <p>${escapeHtml(confirmation.message)}</p>
-          ${confirmation.detail ? `<p class="confirmation-detail">${escapeHtml(confirmation.detail)}</p>` : ""}
+        <div class="confirmation-body">
+          <p class="confirmation-text">${escapeHtml(confirmation.message)}</p>
+          ${confirmation.detail ? `<div class="cost-warning">ALLOCATION COST: <strong>${escapeHtml(confirmation.detail)}</strong></div>` : ""}
         </div>
-        <div class="confirmation-modal-footer">
-          <button class="btn btn-ghost" data-action="cancel-confirmation">Cancel</button>
-          <button class="btn btn-danger" data-action="confirm-action">${confirmation.confirmLabel || "Confirm"}</button>
+        <div class="modal-footer">
+          <div class="button-group">
+            <button class="btn btn-primary" data-action="confirm-action">${confirmation.confirmLabel || "EXECUTE"}</button>
+            <button class="btn btn-ghost" data-action="close-confirmation">ABORT</button>
+          </div>
         </div>
       </div>
     </div>
@@ -362,48 +372,60 @@ function renderConfirmationDialog(confirmation) {
 
 function renderFinalRoundModal(state) {
   const stableCount = Object.values(state.board.fields).filter((f) => f.stability === STABILITY.STABLE).length;
+  const driftPass = state.visionDrift <= GAME_CONFIG.winConditions.maxVisionDrift;
+  const stablePass = stableCount >= GAME_CONFIG.winConditions.minStableFields;
+  const safetyPass = state.psychologicalSafety >= GAME_CONFIG.winConditions.minPsychologicalSafety;
   
   return `
     <div class="modal-overlay" data-action="close-final-round-modal">
       <div class="final-round-modal" onclick="event.stopPropagation()">
         <div class="final-round-modal-header">
-          <span class="final-round-icon">⭐</span>
-          <h2>Final Round</h2>
-          <p class="final-round-subtitle">Game will end after this round</p>
+          <h3 class="mission-tag warning">TERMINATION SEQUENCE</h3>
+          <h1>FINAL VISION CHECK</h1>
+          <p class="final-round-subtitle">Cycle ${state.round}/${GAME_CONFIG.totalRounds}: Execution Phase Finalized</p>
         </div>
         <div class="final-round-modal-body">
-          <p class="final-round-message">This is the last opportunity to influence the Shared Model. Make every action count!</p>
-          
-          <div class="win-conditions-reminder">
-            <h3>Victory Conditions</h3>
-            <div class="win-condition-item">
-              <span class="condition-icon">👁️</span>
-              <span class="condition-text"><strong>Vision Drift</strong> ≤ 8</span>
+          <div class="analysis-grid">
+            <div class="analysis-section">
+              <label>MISSION PARAMETERS</label>
+              <div class="win-conditions-reminder">
+                <div class="win-condition-item">
+                  <div class="condition-label">DRIFT LIMIT</div>
+                  <div class="condition-value">≤ ${GAME_CONFIG.winConditions.maxVisionDrift}</div>
+                </div>
+                <div class="win-condition-item">
+                  <div class="condition-label">SECTOR STABILITY</div>
+                  <div class="condition-value">≥ ${GAME_CONFIG.winConditions.minStableFields} / 13</div>
+                </div>
+                <div class="win-condition-item">
+                  <div class="condition-label">TEAM COHESION</div>
+                  <div class="condition-value">≥ ${GAME_CONFIG.winConditions.minPsychologicalSafety}%</div>
+                </div>
+              </div>
             </div>
-            <div class="win-condition-item">
-              <span class="condition-icon">✅</span>
-              <span class="condition-text"><strong>Stable Fields</strong> ≥ 10 of 13</span>
-            </div>
-            <div class="win-condition-item">
-              <span class="condition-icon">💚</span>
-              <span class="condition-text"><strong>Psychological Safety</strong> ≥ 50%</span>
+            
+            <div class="analysis-section">
+              <label>CURRENT SYSTEM STATE</label>
+              <div class="current-status-preview">
+                <div class="status-row ${driftPass ? "on-track" : "at-risk"}">
+                  <span class="status-label">VISION DRIFT</span>
+                  <span class="status-value">${state.visionDrift}</span>
+                </div>
+                <div class="status-row ${stablePass ? "on-track" : "at-risk"}">
+                  <span class="status-label">STABLE SECTORS</span>
+                  <span class="status-value">${stableCount}/13</span>
+                </div>
+                <div class="status-row ${safetyPass ? "on-track" : "at-risk"}">
+                  <span class="status-label">PSYCH SAFETY</span>
+                  <span class="status-value">${state.psychologicalSafety}%</span>
+                </div>
+              </div>
             </div>
           </div>
           
-          <div class="current-status-preview">
-            <h3>Current Status</h3>
-            <div class="status-row">
-              <span>👁️ Vision Drift:</span>
-              <span class="status-value ${state.visionDrift <= 8 ? "on-track" : "at-risk"}">${state.visionDrift}</span>
-            </div>
-            <div class="status-row">
-              <span>✅ Stable Fields:</span>
-              <span class="status-value ${stableCount >= 10 ? "on-track" : "at-risk"}">${stableCount}/13</span>
-            </div>
-            <div class="status-row">
-              <span>💚 Psych Safety:</span>
-              <span class="status-value ${state.psychologicalSafety >= 50 ? "on-track" : "at-risk"}">${state.psychologicalSafety}%</span>
-            </div>
+          <div class="modal-warning-box">
+            <label>TACTICAL ADVISORY</label>
+            <p>Final opportunity to influence the Shared Model. Entropy mitigate mandatory for successful mission conclusion.</p>
           </div>
         </div>
         <div class="final-round-modal-footer">
@@ -414,14 +436,13 @@ function renderFinalRoundModal(state) {
   `;
 }
 
-function renderDisruptionModal(disruption, onClose) {
+function renderDisruptionModal(disruption) {
   if (!disruption) return "";
   
   const impactRows = [];
   if (disruption.driftImpact) {
     impactRows.push(`
       <div class="impact-row">
-        <span class="impact-icon">👁️</span>
         <span class="impact-label">Vision Drift</span>
         <span class="impact-value danger">+${disruption.driftImpact}</span>
       </div>
@@ -431,7 +452,6 @@ function renderDisruptionModal(disruption, onClose) {
     const sign = disruption.safetyImpact > 0 ? "+" : "";
     impactRows.push(`
       <div class="impact-row">
-        <span class="impact-icon">💚</span>
         <span class="impact-label">Psych Safety</span>
         <span class="impact-value ${disruption.safetyImpact < 0 ? "danger" : "safe"}">${sign}${disruption.safetyImpact}</span>
       </div>
@@ -441,7 +461,6 @@ function renderDisruptionModal(disruption, onClose) {
     const sign = disruption.tokenImpact > 0 ? "+" : "";
     impactRows.push(`
       <div class="impact-row">
-        <span class="impact-icon">⭐</span>
         <span class="impact-label">Alignment Tokens</span>
         <span class="impact-value ${disruption.tokenImpact < 0 ? "danger" : "safe"}">${sign}${disruption.tokenImpact}</span>
       </div>
@@ -450,29 +469,32 @@ function renderDisruptionModal(disruption, onClose) {
 
   return `
     <div class="modal-overlay" data-action="close-disruption-modal">
-      <div class="disruption-modal" onclick="event.stopPropagation()">
-        <div class="disruption-modal-header">
-          <span class="disruption-icon">${disruption.icon || "⚠️"}</span>
-          <h2>${disruption.name}</h2>
+      <div class="disruption-modal active" onclick="event.stopPropagation()">
+        <div class="modal-tactical-header">
+          <span class="warning-icon">⚠️</span>
+          <div class="modal-title-group">
+            <h3>LEVEL 4 ALERT</h3>
+            <h2>${disruption.name}</h2>
+          </div>
         </div>
         <div class="disruption-modal-body">
-          <p class="disruption-narrative">${disruption.description}</p>
-          <div class="disruption-impacts">
-            <h3>Round Impact</h3>
-            ${impactRows.join("")}
+          <p class="modal-narrative">${disruption.description}</p>
+          <div class="modal-section">
+            <h3>Tactical Impact</h3>
+            <div class="impact-stack">${impactRows.join("")}</div>
           </div>
-          <div class="disruption-targets">
-            <h3>Affected Fields</h3>
-            <div class="target-chips">
+          <div class="modal-section">
+            <h3>Compromised Sectors</h3>
+            <div class="target-grid">
               ${disruption.targetFields.map((fieldId) => {
                 const field = FIELD_BY_ID[fieldId];
-                return `<span class="target-chip">${field ? field.name : fieldId}</span>`;
+                return `<div class="tactical-chip">${field ? field.name : fieldId}</div>`;
               }).join("")}
             </div>
           </div>
         </div>
-        <div class="disruption-modal-footer">
-          <button class="btn btn-primary btn-block" data-action="close-disruption-modal">Continue</button>
+        <div class="modal-footer">
+          <button class="btn btn-primary btn-block" data-action="close-disruption-modal">Acknowledge Alert</button>
         </div>
       </div>
     </div>
@@ -481,28 +503,24 @@ function renderDisruptionModal(disruption, onClose) {
 
 function renderDisruptionPanel(disruption) {
   if (!disruption) return "";
+  const impactSummary = disruption.targetFields.map((fId) => `<span class="impact-chip">${fId}</span>`);
   
-  const impactSummary = [];
-  if (disruption.driftImpact) {
-    impactSummary.push(`<span class="impact-mini">👁️ +${disruption.driftImpact}</span>`);
-  }
-  if (disruption.safetyImpact) {
-    impactSummary.push(`<span class="impact-mini ${disruption.safetyImpact < 0 ? "danger" : "safe"}">💚 ${disruption.safetyImpact > 0 ? "+" : ""}${disruption.safetyImpact}</span>`);
-  }
-  if (disruption.tokenImpact) {
-    impactSummary.push(`<span class="impact-mini ${disruption.tokenImpact < 0 ? "danger" : "safe"}">⭐ ${disruption.tokenImpact > 0 ? "+" : ""}${disruption.tokenImpact}</span>`);
-  }
-
   return `
-    <div class="disruption-panel">
-      <div class="disruption-panel-header">
-        <span class="disruption-icon">${disruption.icon || "⚠️"}</span>
-        <div>
-          <h4>${disruption.name}</h4>
-          <div class="impact-summary">${impactSummary.join("")}</div>
+    <div class="disruption-panel active">
+      <div class="disruption-header">
+        <span class="warning-icon">⚠️</span>
+        <div class="disruption-title-group">
+          <h3>INCOMING DISRUPTION</h3>
+          <h2>${disruption.name}</h2>
         </div>
       </div>
-      <p class="disruption-compact">${disruption.effectText}</p>
+      <div class="disruption-body">
+        <p>${disruption.effectText}</p>
+        <div class="impact-info">
+          <label>AFFECTED SECTORS:</label>
+          <div class="impact-chips">${impactSummary.join("")}</div>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -608,16 +626,16 @@ function renderAbilityConfirmation(activePlayer, state) {
     case "restore_and_tokens":
       effectPreview = `
         <div class="effect-preview-item">
-          <span class="effect-icon">✅</span>
-          <span>Restore <strong>${FIELD_BY_ID[character.ability.fieldId]?.name || character.ability.fieldId}</strong> to Stable</span>
+          <label>RESTORATION</label>
+          <span>Stabilizing sector: <strong>${FIELD_BY_ID[character.ability.fieldId]?.name || character.ability.fieldId}</strong></span>
         </div>
         <div class="effect-preview-item">
-          <span class="effect-icon">⭐</span>
-          <span>Gain <strong>+${character.ability.tokens}</strong> Alignment Tokens</span>
+          <label>RESOURCE GAIN</label>
+          <span>Allocating <strong>+${character.ability.tokens}</strong> Alignment Tokens</span>
         </div>
-        <div class="effect-preview-item warning">
-          <span class="effect-icon">⚠️</span>
-          <span>Blind Spot: <strong>${FIELD_BY_ID[character.ability.blindspotStepDown]?.name || character.ability.blindspotStepDown}</strong> steps down</span>
+        <div class="effect-preview-item failure">
+          <label>SYSTEM OVERLOAD</label>
+          <span>Entropy spike in: <strong>${FIELD_BY_ID[character.ability.blindspotStepDown]?.name || character.ability.blindspotStepDown}</strong></span>
         </div>
       `;
       if (fieldState) {
@@ -633,40 +651,40 @@ function renderAbilityConfirmation(activePlayer, state) {
     case "draw_extra":
       effectPreview = `
         <div class="effect-preview-item">
-          <span class="effect-icon">🃏</span>
-          <span>Draw <strong>+${character.ability.count}</strong> extra viewpoint cards</span>
+          <label>INTEL SCAN</label>
+          <span>Expanding perspective: <strong>+${character.ability.count}</strong> cards</span>
         </div>
-        <div class="effect-preview-item warning">
-          <span class="effect-icon">⚠️</span>
-          <span>Blind Spot: <strong>${FIELD_BY_ID[character.ability.blindspotStepDown]?.name || character.ability.blindspotStepDown}</strong> steps down</span>
+        <div class="effect-preview-item failure">
+          <label>SYSTEM OVERLOAD</label>
+          <span>Entropy spike in: <strong>${FIELD_BY_ID[character.ability.blindspotStepDown]?.name || character.ability.blindspotStepDown}</strong></span>
         </div>
       `;
       break;
     case "prevent_drift_round":
       effectPreview = `
         <div class="effect-preview-item">
-          <span class="effect-icon">🛡️</span>
-          <span>Prevent all Vision Drift this round</span>
+          <label>SHIELD PROTOCOL</label>
+          <span>Vision drift neutralization active for current round</span>
         </div>
         <div class="effect-preview-item">
-          <span class="effect-icon">⭐</span>
-          <span>Gain <strong>+${character.ability.tokens}</strong> Alignment Tokens</span>
+          <label>RESOURCE GAIN</label>
+          <span>Allocating <strong>+${character.ability.tokens}</strong> Alignment Tokens</span>
         </div>
-        <div class="effect-preview-item warning">
-          <span class="effect-icon">⚠️</span>
-          <span>Blind Spot: Lose <strong>${character.ability.blindspotTokenLoss}</strong> token from slow response</span>
+        <div class="effect-preview-item failure">
+          <label>PROCESSING LAG</label>
+          <span>Resource leakage: <strong>${character.ability.blindspotTokenLoss}</strong> token(s)</span>
         </div>
       `;
       break;
     case "restore_any":
       effectPreview = `
         <div class="effect-preview-item">
-          <span class="effect-icon">✅</span>
-          <span>Restore any selected field to Stable</span>
+          <label>RESTORATION</label>
+          <span>Emergency stabilization of target coordinate</span>
         </div>
-        <div class="effect-preview-item warning">
-          <span class="effect-icon">⚠️</span>
-          <span>Blind Spot: Stakeholder field may drift if pressure is high</span>
+        <div class="effect-preview-item failure">
+          <label>OPERATIONAL BLIND SPOT</label>
+          <span>Stakeholder sectors vulnerable to pressure spike</span>
         </div>
       `;
       if (fieldState) {
@@ -682,28 +700,28 @@ function renderAbilityConfirmation(activePlayer, state) {
     case "restore_stakeholders":
       effectPreview = `
         <div class="effect-preview-item">
-          <span class="effect-icon">✅</span>
-          <span>Restore both <strong>Internal</strong> and <strong>External</strong> Stakeholders</span>
+          <label>STAKEHOLDER RELIEF</label>
+          <span>Simultaneous stabilization of Internal/External Stakeholders</span>
         </div>
         <div class="effect-preview-item">
-          <span class="effect-icon">⭐</span>
-          <span>Gain <strong>+${character.ability.tokens}</strong> Alignment Token</span>
+          <label>RESOURCE GAIN</label>
+          <span>Allocating <strong>+${character.ability.tokens}</strong> Alignment Token</span>
         </div>
-        <div class="effect-preview-item warning">
-          <span class="effect-icon">⚠️</span>
-          <span>Blind Spot: Cannot neutralize adversarial disruptions alone</span>
+        <div class="effect-preview-item failure">
+          <label>PROCESSING LIMIT</label>
+          <span>Vulnerable to lone adversarial disruptions</span>
         </div>
       `;
       break;
     case "protect_field":
       effectPreview = `
         <div class="effect-preview-item">
-          <span class="effect-icon">🛡️</span>
-          <span>Protect selected field for <strong>${character.ability.rounds} round(s)</strong></span>
+          <label>DEFENSE PROTOCOL</label>
+          <span>Sector protection active for <strong>${character.ability.rounds} round(s)</strong></span>
         </div>
-        <div class="effect-preview-item warning">
-          <span class="effect-icon">⚠️</span>
-          <span>Blind Spot: <strong>-${Math.abs(character.ability.blindspotSafetyLoss)}</strong> Psychological Safety</span>
+        <div class="effect-preview-item failure">
+          <label>SYSTEM STRAIN</label>
+          <span>Team safety reduction: <strong>${Math.abs(character.ability.blindspotSafetyLoss)}%</strong></span>
         </div>
       `;
       break;
@@ -713,33 +731,38 @@ function renderAbilityConfirmation(activePlayer, state) {
 
   const currentState = `
     <div class="current-state-row">
-      <span>👁️ Drift: <strong>${state.visionDrift}</strong></span>
-      <span>💚 Safety: <strong>${state.psychologicalSafety}%</strong></span>
-      <span>⭐ Tokens: <strong>${state.alignmentTokens}</strong></span>
+      <div class="state-item"><label>DRIFT</label><strong>${state.visionDrift}</strong></div>
+      <div class="state-item"><label>SAFETY</label><strong>${state.psychologicalSafety}%</strong></div>
+      <div class="state-item"><label>TOKENS</label><strong>${state.alignmentTokens}</strong></div>
     </div>
   `;
 
   return `
     <div class="modal-overlay" data-action="hide-ability-confirmation">
       <div class="ability-confirmation-modal" onclick="event.stopPropagation()">
-        <div class="ability-modal-header" style="background: linear-gradient(135deg, ${character.color} 0%, ${character.color}dd 100%)">
-          <span class="ability-modal-icon">${character.name.charAt(0)}</span>
+        <div class="ability-modal-header" style="border-left: 4px solid ${character.color}">
+          <span class="ability-modal-icon" style="background: ${character.color}">${character.name.charAt(0)}</span>
           <div>
-            <h2>${character.name} Ability</h2>
+            <h3 class="mission-tag">ENGAGEMENT PROTOCOL</h3>
+            <h1>${character.name}</h1>
             <p class="ability-subtitle">${character.superpower}</p>
           </div>
         </div>
         <div class="ability-modal-body">
-          <h3>Effect Preview</h3>
-          <div class="effect-preview">${effectPreview}</div>
-          
-          ${beforeAfterPreview ? `<h3>Target Field Change</h3>${beforeAfterPreview}` : ""}
-          
-          <h3>Current Game State</h3>
-          ${currentState}
-          
-          <div class="modal-warning-box">
-            <strong>⚠️ Blind Spot:</strong> ${character.blindspot}
+          <div class="analysis-grid">
+            <div class="analysis-section">
+              <label>SIMULATED OUTCOME</label>
+              <div class="effect-preview">${effectPreview}</div>
+              ${beforeAfterPreview ? `<div class="tactical-divider"></div>${beforeAfterPreview}` : ""}
+            </div>
+            <div class="analysis-section">
+              <label>SYSTEM STATUS</label>
+              ${currentState}
+              <div class="modal-warning-box">
+                <label>OPERATIONAL RISK</label>
+                <p><strong>${character.blindspot}</strong></p>
+              </div>
+            </div>
           </div>
         </div>
         <div class="ability-modal-footer">
@@ -1038,18 +1061,31 @@ function renderRoundPanel(state) {
 
 function renderStrategicPause(state) {
   return `
-    <section class="panel panel-warning">
+    <section class="panel panel-warning strategic-pause-panel">
       <div class="screen-header">
-        ${renderBackButton(state.screen)}
-        <h1>Strategic Pause</h1>
+        <h3 class="mission-tag warning">EMERGENCY PROTOCOL</h3>
+        <h1>STRATEGIC RE-ALIGNMENT</h1>
+        <p class="warning-text">Critical Vision Drift detected: ${state.visionDrift}. Immediate anchoring required.</p>
       </div>
-      <p>Vision Drift reached ${state.visionDrift}. Pause and re-anchor the Shared Model.</p>
-      <p><strong>Prompt:</strong> ${COACHING_PROMPTS[state.strategicPause.promptId ?? 0]}</p>
-      <label>Field to restore (cost: 2 alignment tokens)</label>
-      <select id="restore-field">${renderFieldOptions(state)}</select>
-      <div class="row">
-        <button class="btn btn-primary" data-action="restore-field">Restore Field</button>
-        <button class="btn" data-action="skip-restore">Continue Without Restoration</button>
+
+      <div class="coaching-brief">
+        <div class="brief-icon">⚠️</div>
+        <div class="brief-content">
+          <label>ALIGNMENT PROMPT</label>
+          <p>${COACHING_PROMPTS[state.strategicPause.promptId ?? 0]}</p>
+        </div>
+      </div>
+
+      <div class="restoration-console">
+        <h3>SECTOR RESTORATION</h3>
+        <p class="subtle">Allocate 2 Alignment Tokens to stabilize a compromised sector.</p>
+        <div class="restore-actions">
+          <select id="restore-field" class="tactical-select">${renderFieldOptions(state)}</select>
+          <div class="button-group">
+            <button class="btn btn-primary" data-action="restore-field">STABILIZE SECTOR</button>
+            <button class="btn btn-ghost" data-action="skip-restore">BYPASS RESTORATION</button>
+          </div>
+        </div>
       </div>
     </section>
   `;
@@ -1063,118 +1099,68 @@ function renderDebrief(state) {
   const safetyPassed = state.psychologicalSafety >= GAME_CONFIG.winConditions.minPsychologicalSafety;
   
   return `
-    <section class="panel">
-      <div class="screen-header">
-        ${renderBackButton(state.screen)}
-        <h1>Debrief</h1>
+    <section class="panel debrief-panel">
+      <div class="debrief-header">
+        <h3 class="mission-tag ${result.won ? "success" : "failure"}">MISSION COMPLETE</h3>
+        <h1>PERFORMANCE REVIEW</h1>
+        <h2 class="${result.won ? "status-success" : "status-failure"}">
+          ${result.won ? "VISION SECURED" : "CRITICAL DRIFT DETECTED"}
+        </h2>
       </div>
-      <h2 class="${result.won ? "win" : "lose"}">${result.won ? "Victory: Vision Held" : "Vision Drifted"}</h2>
-      
-      <div class="debrief-summary">
-        <div class="summary-metric">
-          <span class="metric-label">Vision Drift</span>
-          <span class="metric-value ${driftPassed ? "pass" : "fail"}">${state.visionDrift}</span>
-          <span class="metric-threshold">≤ ${GAME_CONFIG.winConditions.maxVisionDrift}</span>
+
+      <div class="metrics-dashboard">
+        <div class="metric-card ${driftPassed ? "pass" : "fail"}">
+          <label>VISION DRIFT</label>
+          <div class="metric-value">${state.visionDrift}</div>
+          <div class="metric-target">LIMIT: ≤ ${GAME_CONFIG.winConditions.maxVisionDrift}</div>
         </div>
-        <div class="summary-metric">
-          <span class="metric-label">Stable Fields</span>
-          <span class="metric-value ${stablePassed ? "pass" : "fail"}">${stableCount}</span>
-          <span class="metric-threshold">≥ ${GAME_CONFIG.winConditions.minStableFields}</span>
+        <div class="metric-card ${stablePassed ? "pass" : "fail"}">
+          <label>STABLE SECTORS</label>
+          <div class="metric-value">${stableCount}</div>
+          <div class="metric-target">REQ: ≥ ${GAME_CONFIG.winConditions.minStableFields}</div>
         </div>
-        <div class="summary-metric">
-          <span class="metric-label">Psych Safety</span>
-          <span class="metric-value ${safetyPassed ? "pass" : "fail"}">${state.psychologicalSafety}%</span>
-          <span class="metric-threshold">≥ ${GAME_CONFIG.winConditions.minPsychologicalSafety}%</span>
+        <div class="metric-card ${safetyPassed ? "pass" : "fail"}">
+          <label>PSYCH SAFETY</label>
+          <div class="metric-value">${state.psychologicalSafety}%</div>
+          <div class="metric-target">MIN: ≥ ${GAME_CONFIG.winConditions.minPsychologicalSafety}%</div>
         </div>
       </div>
 
-      <h3>Win Condition Breakdown</h3>
-      <div class="win-condition-breakdown">
-        <div class="breakdown-item ${driftPassed ? "passed" : "failed"}">
-          <span class="breakdown-icon">${driftPassed ? "✅" : "❌"}</span>
-          <div class="breakdown-content">
-            <div class="breakdown-header">
-              <strong>Vision Drift</strong>
-              <span class="breakdown-result">${driftPassed ? "PASS" : "FAIL"}</span>
-            </div>
-            <div class="breakdown-detail">
-              ${state.visionDrift} ≤ ${GAME_CONFIG.winConditions.maxVisionDrift} (threshold)
+      <div class="analysis-grid">
+        <div class="analysis-section">
+          <h3>SITUATION ANALYSIS</h3>
+          <div class="analysis-body ${result.won ? "victory-body" : "defeat-body"}">
+            <p>${result.won 
+              ? "The unit maintained strategic alignment under pressure. Shared mental models held through systematic disruptions."
+              : "Systemic entropy exceeded mitigation capacity. Alignment was lost at key nodal points."
+            }</p>
+            <div class="leadership-translation">
+              <label>LEADERSHIP FINDING</label>
+              <p>${result.won 
+                ? "Discipline in holding the vision translates to stakeholder trust and project resilience."
+                : "Reactive behavior to disruptions leads to scope creep and team fragmentation."
+              }</p>
             </div>
           </div>
         </div>
-        
-        <div class="breakdown-item ${stablePassed ? "passed" : "failed"}">
-          <span class="breakdown-icon">${stablePassed ? "✅" : "❌"}</span>
-          <div class="breakdown-content">
-            <div class="breakdown-header">
-              <strong>Stable Fields</strong>
-              <span class="breakdown-result">${stablePassed ? "PASS" : "FAIL"}</span>
-            </div>
-            <div class="breakdown-detail">
-              ${stableCount} ≥ ${GAME_CONFIG.winConditions.minStableFields} of 13 fields required
-            </div>
-          </div>
-        </div>
-        
-        <div class="breakdown-item ${safetyPassed ? "passed" : "failed"}">
-          <span class="breakdown-icon">${safetyPassed ? "✅" : "❌"}</span>
-          <div class="breakdown-content">
-            <div class="breakdown-header">
-              <strong>Psychological Safety</strong>
-              <span class="breakdown-result">${safetyPassed ? "PASS" : "FAIL"}</span>
-            </div>
-            <div class="breakdown-detail">
-              ${state.psychologicalSafety}% ≥ ${GAME_CONFIG.winConditions.minPsychologicalSafety}% (minimum required)
-            </div>
-          </div>
+
+        <div class="analysis-section">
+          <h3>MISSION REFLECTION</h3>
+          <ul class="reflection-list">
+            ${DEBRIEF_QUESTIONS.map((q) => `<li>${escapeHtml(q)}</li>`).join("")}
+          </ul>
         </div>
       </div>
 
-      <h3>What This Means</h3>
-      <div class="what-this-means ${result.won ? "victory" : "defeat"}">
-        ${result.won 
-          ? `
-            <div class="meaning-content victory">
-              <p><strong>🎉 Victory Achieved!</strong></p>
-              <p>Your team demonstrated strong vision-holding behaviors throughout the simulation. You successfully:</p>
-              <ul class="meaning-list">
-                <li><strong>Maintained Strategic Alignment:</strong> Vision Drift stayed within acceptable limits (≤ ${GAME_CONFIG.winConditions.maxVisionDrift}), showing disciplined focus on the Shared Model.</li>
-                <li><strong>Protected Critical Infrastructure:</strong> ${stableCount} of 13 fields remained stable, indicating effective risk management and proactive intervention.</li>
-                <li><strong>Preserved Team Dynamics:</strong> Psychological Safety at ${state.psychologicalSafety}% demonstrates healthy team communication and trust.</li>
-              </ul>
-              <p class="meaning-translation"><strong>Leadership Translation:</strong> In real projects, this performance translates to delivering value while maintaining stakeholder confidence and team cohesion under pressure.</p>
-            </div>
-          `
-          : `
-            <div class="meaning-content defeat">
-              <p><strong>⚠️ Learning Opportunity</strong></p>
-              <p>Vision drift occurred when pressure exceeded your team's response capacity. This simulation reveals:</p>
-              <ul class="meaning-list">
-                ${!driftPassed ? `<li><strong>Strategic Focus Challenge:</strong> Vision Drift reached ${state.visionDrift}, exceeding the ${GAME_CONFIG.winConditions.maxVisionDrift} threshold. In real projects, this manifests as scope creep, misaligned deliverables, or stakeholder confusion.</li>` : ""}
-                ${!stablePassed ? `<li><strong>System Stability Gap:</strong> Only ${stableCount} fields remained stable (needed ${GAME_CONFIG.winConditions.minStableFields}). This mirrors real-world technical debt accumulation or process breakdown.</li>` : ""}
-                ${!safetyPassed ? `<li><strong>Team Dynamics Erosion:</strong> Psychological Safety dropped to ${state.psychologicalSafety}%. Low safety correlates with reduced innovation, hidden risks, and team dysfunction in actual organizations.</li>` : ""}
-              </ul>
-              <p class="meaning-translation"><strong>Leadership Translation:</strong> In real projects, Vision Drift happens when teams react to disruptions without a disciplined framework. The Shared Model provides the structure to hold vision through pressure—practice using it proactively, not reactively.</p>
-            </div>
-          `
-        }
-      </div>
-
-      <h3>Reflection Questions</h3>
-      <ol>
-        ${DEBRIEF_QUESTIONS.map((q) => `<li>${escapeHtml(q)}</li>`).join("")}
-      </ol>
-
-      <h3>Event Timeline</h3>
-      <ol class="event-log">
-        ${state.log.map((e) => `<li>${escapeHtml(e)}</li>`).join("")}
-      </ol>
-
-      <label for="debrief-notes">Notes</label>
-      <textarea id="debrief-notes" rows="6">${escapeHtml(state.ui.debriefNotes || "")}</textarea>
-      <div class="row">
-        <button class="btn" data-action="export-debrief">Export Debrief JSON</button>
-        <button class="btn btn-primary" data-action="reset-game">Play Again</button>
+      <div class="review-footer">
+        <div class="notes-block">
+          <label>COMMANDER'S NOTES</label>
+          <textarea id="debrief-notes" rows="4" class="tactical-textarea" placeholder="Input final synthesis...">${escapeHtml(state.ui.debriefNotes || "")}</textarea>
+        </div>
+        <div class="console-actions">
+          <button class="btn btn-ghost" data-action="export-debrief">EXPORT TELEMETRY</button>
+          <button class="btn btn-primary btn-large" data-action="reset-game">RE-INITIALIZE MISSION</button>
+        </div>
       </div>
     </section>
   `;
