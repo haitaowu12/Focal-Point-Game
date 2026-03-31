@@ -1,3 +1,10 @@
+---
+title: 'FOCAL POINT: Hold the Vision'
+date_converted: '2026-03-04'
+domain: projects
+tags: []
+---
+
 # FOCAL POINT: Hold the Vision
 
 A static browser game for leadership training built around the Cohort 9 Shared Model. This rebuild focuses on deterministic state transitions, reliable hot-seat multiplayer, and GitHub Pages hosting.

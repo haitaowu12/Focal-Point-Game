@@ -1,6 +1,7 @@
 import { createInitialState, reducer, getActions } from "./state.js";
 import { renderApp, renderGameToText } from "./render.js";
 import { loadState, saveState } from "./storage.js";
+import { SCREENS } from "./data/config.js";
 
 const ACTIONS = getActions();
 
@@ -96,6 +97,32 @@ export class GameController {
           targets: this.resolveTargetsForCard(node.dataset.cardId),
         });
         break;
+      case "show-ability-confirmation":
+        this.dispatch({
+          type: ACTIONS.SET_UI,
+          patch: { 
+            showAbilityConfirmation: true,
+            abilityTarget: this.getSelectValue("primary-target"),
+          },
+        }, { autosave: false });
+        break;
+      case "hide-ability-confirmation":
+        this.dispatch({
+          type: ACTIONS.SET_UI,
+          patch: { showAbilityConfirmation: false },
+        }, { autosave: false });
+        break;
+      case "confirm-ability":
+        this.dispatch({
+          type: ACTIONS.USE_CHARACTER_ABILITY,
+          playerId: node.dataset.playerId,
+          targetFieldId: node.dataset.targetField || this.getSelectValue("primary-target"),
+        });
+        this.dispatch({
+          type: ACTIONS.SET_UI,
+          patch: { showAbilityConfirmation: false },
+        }, { autosave: false });
+        break;
       case "use-ability":
         this.dispatch({
           type: ACTIONS.USE_CHARACTER_ABILITY,
@@ -145,6 +172,109 @@ export class GameController {
         break;
       case "clear-error":
         this.dispatch({ type: ACTIONS.CLEAR_ERROR }, { autosave: false });
+        break;
+      case "close-disruption-modal":
+        this.dispatch({
+          type: ACTIONS.SET_UI,
+          patch: { showDisruptionModal: false },
+        }, { autosave: false });
+        break;
+      case "show-disc-guide":
+        this.dispatch({
+          type: ACTIONS.SET_UI,
+          patch: { showDiscGuide: true },
+        }, { autosave: false });
+        break;
+      case "close-disc-guide":
+        this.dispatch({
+          type: ACTIONS.SET_UI,
+          patch: { showDiscGuide: false },
+        }, { autosave: false });
+        break;
+      case "close-final-round-modal":
+        this.dispatch({
+          type: ACTIONS.SET_UI,
+          patch: { showFinalRoundModal: false },
+        }, { autosave: false });
+        break;
+      case "go-back": {
+        const targetScreen = node.dataset.targetScreen;
+        const screenNames = {
+          CHARACTER_SELECT: "Character Selection",
+          ROUND_START: "Round Start",
+          RESPONSE: "Response Phase",
+          ROUND_RESOLVE: "Round Resolve",
+          NEXT_ROUND: "Next Round",
+          STRATEGIC_PAUSE: "Strategic Pause",
+          DEBRIEF: "Lobby",
+          LOBBY: "Lobby",
+        };
+        const currentName = screenNames[this.state.screen] || "current screen";
+        const targetName = screenNames[targetScreen] || "previous screen";
+        
+        this.dispatch({
+          type: ACTIONS.SET_UI,
+          patch: {
+            confirmationDialog: {
+              message: `Return to ${targetName}?`,
+              detail: "Any unsaved progress in the current session will be lost.",
+              confirmLabel: "Return",
+              onConfirm: {
+                type: "NAVIGATE_SCREEN",
+                targetScreen,
+              },
+            },
+          },
+        }, { autosave: false });
+        break;
+      }
+      case "cancel-confirmation":
+        this.dispatch({
+          type: ACTIONS.SET_UI,
+          patch: { confirmationDialog: null },
+        }, { autosave: false });
+        break;
+      case "confirm-action": {
+        const confirmation = this.state.ui.confirmationDialog;
+        if (confirmation && confirmation.onConfirm) {
+          if (confirmation.onConfirm.type === "NAVIGATE_SCREEN") {
+            this.dispatch({
+              type: ACTIONS.SET_UI,
+              patch: {
+                confirmationDialog: null,
+                showDiscGuide: false,
+              },
+            }, { autosave: false });
+            this.dispatch({
+              type: ACTIONS.RESET_GAME,
+            });
+            if (confirmation.onConfirm.targetScreen === SCREENS.CHARACTER_SELECT) {
+              this.dispatch({ type: ACTIONS.START_GAME });
+            }
+          }
+        }
+        break;
+      }
+      case "close-confirmation":
+        this.dispatch({
+          type: ACTIONS.SET_UI,
+          patch: { confirmationDialog: null },
+        }, { autosave: false });
+        break;
+      case "toggle-simplified-view":
+        this.dispatch({
+          type: ACTIONS.SET_UI,
+          patch: { 
+            simplifiedView: !this.state.ui.simplifiedView,
+            focusedViewTab: "border",
+          },
+        }, { autosave: false });
+        break;
+      case "switch-focused-tab":
+        this.dispatch({
+          type: ACTIONS.SET_UI,
+          patch: { focusedViewTab: node.dataset.tab },
+        }, { autosave: false });
         break;
       case "export-debrief":
         this.exportDebrief();

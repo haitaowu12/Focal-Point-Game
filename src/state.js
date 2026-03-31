@@ -249,8 +249,11 @@ export function createInitialState(seed = Date.now()) {
       cardTargetSelection: [],
       abilityTarget: null,
       privateHandVisibleFor: null,
+      showAbilityConfirmation: false,
       debriefNotes: "",
       debriefResult: null,
+      showDiscGuide: false,
+      showFinalRoundModal: false,
     },
   };
 }
@@ -367,7 +370,11 @@ export function reducer(state, action) {
         screen: SCREENS.DISRUPTION,
       };
       next = applyDisruption(next, disruptionId);
-      next = { ...next, screen: SCREENS.RESPONSE };
+      next = {
+        ...next,
+        screen: SCREENS.RESPONSE,
+        ui: { ...next.ui, showDisruptionModal: true },
+      };
       return next;
     }
 
@@ -534,10 +541,15 @@ export function reducer(state, action) {
       }
 
       let next = tickFieldProtection(state);
+      const nextRound = next.round + 1;
       next = {
         ...next,
-        round: next.round + 1,
+        round: nextRound,
         screen: SCREENS.ROUND_START,
+        ui: { 
+          ...next.ui, 
+          showFinalRoundModal: nextRound === GAME_CONFIG.totalRounds,
+        },
       };
 
       for (const player of next.players) {
