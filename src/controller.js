@@ -17,13 +17,13 @@ export class GameController {
     this.render();
   }
 
-  dispatch(action, options = { autosave: true, render: true }) {
+  dispatch(action, { autosave = true, render = true } = {}) {
     const next = reducer(this.state, action);
     this.state = next;
-    if (options.autosave) {
+    if (autosave) {
       this.debouncedSave();
     }
-    if (options.render) {
+    if (render) {
       this.render();
     }
   }
