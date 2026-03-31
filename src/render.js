@@ -42,10 +42,11 @@ const DISC_TYPES = {
 
 function renderGauge(label, value, max, tone = "brand") {
   const pct = Math.max(0, Math.min(100, Math.round((value / max) * 100)));
+  const prefix = label.toUpperCase().split(" ")[0];
   return `
     <div class="gauge-card ${tone}">
       <div class="gauge-header">
-        <label>${label}</label>
+        <label><span class="tactical-prefix">${prefix}:</span> ${label}</label>
         <strong>${value}${label === "Psych Safety" ? "%" : ""}</strong>
       </div>
       <div class="gauge-track">
@@ -188,7 +189,12 @@ function renderPhaseStepper(screen) {
       ${steps
         .map((step, i) => {
           const status = i < index ? "done" : i === index ? "active" : "pending";
-          return `<div class="step ${status}"><span>${i + 1}</span><label>${step.label}</label></div>`;
+          return `
+            <div class="step ${status}">
+              <span>${i + 1}</span>
+              <label>${step.label}</label>
+            </div>
+          `;
         })
         .join("")}
     </div>
@@ -965,11 +971,14 @@ function renderRoundPanel(state) {
       <div class="screen-header">
         ${renderBackButton(state.screen)}
         <header class="topline">
-          <h1>FOCAL POINT</h1>
+          <div class="tactical-title">
+            <span class="mission-id">FP-SIM // R${state.round}</span>
+            <h1>FOCAL POINT</h1>
+          </div>
           <div class="chips">
             ${renderRoundProgress(state)}
-            <span>${state.screen.replaceAll("_", " ")}</span>
-            <span>Active: ${activePlayer ? escapeHtml(activePlayer.name) : "-"}</span>
+            <span>PHASE: ${state.screen.replaceAll("_", " ")}</span>
+            <span>UNIT: ${activePlayer ? escapeHtml(activePlayer.name).toUpperCase() : "-"}</span>
           </div>
         </header>
       </div>
@@ -978,13 +987,15 @@ function renderRoundPanel(state) {
         ${renderGauge("Vision Drift", state.visionDrift, 20, "danger")}
         ${renderGauge("Psych Safety", state.psychologicalSafety, 100, "safe")}
         ${renderGauge("Alignment Tokens", state.alignmentTokens, 12, "brand")}
-        <div class="gauge-card">
-          <label>Stable Fields</label>
-          <strong>${Object.values(state.board.fields).filter((f) => f.stability === STABILITY.STABLE).length}/13</strong>
+        <div class="gauge-card metrics">
+          <div class="gauge-header">
+            <label><span class="tactical-prefix">SECTORS:</span> STABLE</label>
+            <strong>${Object.values(state.board.fields).filter((f) => f.stability === STABILITY.STABLE).length}/13</strong>
+          </div>
           <div class="legend-row">
-            <span class="dot stable"></span><small>Stable</small>
-            <span class="dot drifting"></span><small>Drifting</small>
-            <span class="dot collapsed"></span><small>Collapsed</small>
+            <span class="dot stable"></span><small>S</small>
+            <span class="dot drifting"></span><small>D</small>
+            <span class="dot collapsed"></span><small>C</small>
           </div>
         </div>
       </div>
