@@ -17,13 +17,20 @@ export class GameController {
     this.render();
   }
 
-  dispatch(action, options = { autosave: true }) {
+  dispatch(action, options = { autosave: true, render: true }) {
     const next = reducer(this.state, action);
     this.state = next;
     if (options.autosave) {
-      saveState(this.state);
+      this.debouncedSave();
     }
-    this.render();
+    if (options.render) {
+      this.render();
+    }
+  }
+
+  debouncedSave() {
+    clearTimeout(this.saveTimeout);
+    this.saveTimeout = setTimeout(() => saveState(this.state), 1000);
   }
 
   bindEvents() {
@@ -41,13 +48,13 @@ export class GameController {
           type: ACTIONS.UPDATE_PLAYER_NAME,
           playerId: target.dataset.playerId,
           name: target.value,
-        });
+        }, { autosave: true, render: false }); // Update state but don't re-render and lose focus
       }
       if (target.id === "debrief-notes") {
         this.dispatch({
           type: ACTIONS.SET_UI,
           patch: { debriefNotes: target.value },
-        });
+        }, { autosave: true, render: false });
       }
     });
 
@@ -332,7 +339,12 @@ export class GameController {
   }
 
   render() {
-    renderApp(this.root, this.state);
+    if (this.renderPending) return;
+    this.renderPending = true;
+    requestAnimationFrame(() => {
+      renderApp(this.root, this.state);
+      this.renderPending = false;
+    });
   }
 
   getStateText() {
