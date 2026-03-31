@@ -76,6 +76,10 @@ function renderLobby(state) {
         <h1>FOCAL POINT</h1>
         <h2>[ MISSION HOLD_THE_VISION ]</h2>
       </div>
+
+      <div class="mission-overview">
+        <p>Focal Point is a leadership simulation where players must maintain a shared organizational vision amidst systemic disruption. By coordinating across core and border strategic sectors, the unit must mitigate entropy—represented as Vision Drift—while maintaining psychological safety and resource alignment. Success depends on the team's ability to sync mental models, deploy specialized leadership superpowers, and prioritize strategic stability over reactive fixes, ensuring the mission remains on track as complexity scales.</p>
+      </div>
       
       <div class="mission-briefing">
         <div class="briefing-card">
