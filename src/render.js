@@ -310,34 +310,37 @@ function renderDiscGuideModal() {
   return `
     <div class="modal-overlay" data-modal-close="close-disc-guide">
       <div class="disc-guide-modal active">
-        <div class="modal-tactical-header">
-          <div class="modal-title-group">
-            <h3>REFERENCE PROTOCOL</h3>
-            <h2>DISC BEHAVIORAL MODEL</h2>
-          </div>
+        <div class="disc-guide-modal-header">
+          <h2>DISC BEHAVIORAL MODEL</h2>
+          <p>Reference Guide</p>
         </div>
-        <div class="disc-guide-body">
+        <div class="disc-guide-modal-body">
           <div class="disc-quadrants">
             ${discOrder.map((type) => {
               const disc = DISC_TYPES[type];
               return `
-                <div class="disc-sector" style="--sector-color: ${disc.color}">
-                  <div class="sector-header">
-                    <span class="sector-type">${type}</span>
-                    <span class="sector-name">${disc.name}</span>
+                <div class="disc-quadrant" style="border-left-color: ${disc.color}">
+                  <div class="disc-quadrant-header">
+                    <h3 style="color: ${disc.color}">${type} - ${disc.name}</h3>
                   </div>
-                  <div class="sector-content">
-                    <div class="trait-block">
-                      <label>TRAITS</label>
-                      <p>${disc.traits.join(" • ")}</p>
+                  <div class="disc-content">
+                    <div class="disc-section">
+                      <h4>TRAITS</h4>
+                      <ul>
+                        ${disc.traits.map((t) => `<li>${t}</li>`).join("")}
+                      </ul>
                     </div>
-                    <div class="trait-block">
-                      <label>STRENGTHS</label>
-                      <p>${disc.strengths.join(" • ")}</p>
+                    <div class="disc-section">
+                      <h4>STRENGTHS</h4>
+                      <ul>
+                        ${disc.strengths.map((s) => `<li>${s}</li>`).join("")}
+                      </ul>
                     </div>
-                    <div class="trait-block danger">
-                      <label>BLIND SPOTS</label>
-                      <p>${disc.blindSpots.join(" • ")}</p>
+                    <div class="disc-section">
+                      <h4 style="color: var(--danger)">BLIND SPOTS</h4>
+                      <ul>
+                        ${disc.blindSpots.map((b) => `<li>${b}</li>`).join("")}
+                      </ul>
                     </div>
                   </div>
                 </div>
@@ -345,7 +348,7 @@ function renderDiscGuideModal() {
             }).join("")}
           </div>
         </div>
-        <div class="modal-footer">
+        <div class="disc-guide-modal-footer">
           <button class="btn btn-primary btn-block" data-action="close-disc-guide">Acknowledge Reference</button>
         </div>
       </div>
