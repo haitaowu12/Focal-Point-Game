@@ -7,13 +7,18 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main id="app" aria-live="polite">
-      <section style="max-width:760px;margin:32px auto;padding:16px;border:1px solid #d8c8ad;border-radius:12px;background:#fffaf2;font-family:'Avenir Next','Segoe UI',sans-serif;color:#1f2933;">
-        <h1 style="margin-top:0;">FOCAL POINT: Hold the Vision</h1>
-        <p>If you opened this page directly from disk, the game may not load because modern browsers block ES modules on <code>file://</code>.</p>
-        <p>Run a local server from this folder and open <code>http://localhost:5173</code> instead:</p>
-        <pre style="background:#f4efe6;padding:10px;border-radius:8px;overflow:auto;"><code>python3 -m http.server 5173</code></pre>
-      </section>
+    <main id="app" aria-live="polite" class="mission-loader">
+      <div class="loader-content">
+        <h1 class="mission-title">FOCAL POINT // SESSION INITIALIZING</h1>
+        <div class="loader-bar">
+          <div class="loader-progress"></div>
+        </div>
+        <p class="loader-status">ESTABLISHING SECURE PROTOCOLS...</p>
+        <div class="loader-warning">
+          <p>MODERN BROWSER ENVIRONMENT REQUIRED (ES MODULES).</p>
+          <p>IF HANGS, RUN LOCAL VOLT COMMAND: <code>python3 -m http.server 5173</code></p>
+        </div>
+      </div>
     </main>
     <script type="module" src="./src/main.js"></script>
   </body>
