@@ -308,8 +308,8 @@ function renderDiscGuideModal() {
   const discOrder = ["D", "i", "S", "C"];
   
   return `
-    <div class="modal-overlay" data-action="close-disc-guide">
-      <div class="disc-guide-modal active" onclick="event.stopPropagation()">
+    <div class="modal-overlay" data-modal-close="close-disc-guide">
+      <div class="disc-guide-modal active">
         <div class="modal-tactical-header">
           <div class="modal-title-group">
             <h3>REFERENCE PROTOCOL</h3>
@@ -357,8 +357,8 @@ function renderConfirmationDialog(confirmation) {
   if (!confirmation) return "";
   
   return `
-    <div class="modal-overlay" data-action="close-confirmation">
-      <div class="confirmation-modal active" onclick="event.stopPropagation()">
+    <div class="modal-overlay" data-modal-close="close-confirmation">
+      <div class="confirmation-modal active">
         <div class="modal-tactical-header">
           <div class="modal-title-group">
             <h3>USER ACTION REQUIRED</h3>
@@ -387,8 +387,8 @@ function renderFinalRoundModal(state) {
   const safetyPass = state.psychologicalSafety >= GAME_CONFIG.winConditions.minPsychologicalSafety;
   
   return `
-    <div class="modal-overlay" data-action="close-final-round-modal">
-      <div class="final-round-modal" onclick="event.stopPropagation()">
+    <div class="modal-overlay" data-modal-close="close-final-round-modal">
+      <div class="final-round-modal">
         <div class="final-round-modal-header">
           <h3 class="mission-tag warning">TERMINATION SEQUENCE</h3>
           <h1>FINAL VISION CHECK</h1>
@@ -478,8 +478,8 @@ function renderDisruptionModal(disruption) {
   }
 
   return `
-    <div class="modal-overlay" data-action="close-disruption-modal">
-      <div class="disruption-modal active" onclick="event.stopPropagation()">
+    <div class="modal-overlay" data-modal-close="close-disruption-modal">
+      <div class="disruption-modal active">
         <div class="modal-tactical-header">
           <span class="warning-icon">⚠️</span>
           <div class="modal-title-group">
@@ -748,8 +748,8 @@ function renderAbilityConfirmation(activePlayer, state) {
   `;
 
   return `
-    <div class="modal-overlay" data-action="hide-ability-confirmation">
-      <div class="ability-confirmation-modal" onclick="event.stopPropagation()">
+    <div class="modal-overlay" data-modal-close="hide-ability-confirmation">
+      <div class="ability-confirmation-modal">
         <div class="ability-modal-header" style="border-left: 4px solid ${character.color}">
           <span class="ability-modal-icon" style="background: ${character.color}">${character.name.charAt(0)}</span>
           <div>

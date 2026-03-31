@@ -35,6 +35,15 @@ export class GameController {
 
   bindEvents() {
     document.addEventListener("click", (event) => {
+      // Check if click was directly on an overlay
+      if (event.target.classList.contains("modal-overlay")) {
+        const action = event.target.dataset.modalClose;
+        if (action) {
+          this.handleAction(action, event.target);
+          return;
+        }
+      }
+
       const target = event.target.closest("[data-action]");
       if (!target) return;
       const action = target.dataset.action;
