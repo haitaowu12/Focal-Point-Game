@@ -1,0 +1,48 @@
+# Page snapshot
+
+```yaml
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - button "← Back to Lobby" [ref=e5] [cursor=pointer]:
+        - generic [ref=e6]: ←
+        - generic [ref=e7]: Back to Lobby
+      - heading "Character Selection" [level=1] [ref=e8]
+    - paragraph [ref=e9]: Each player must choose one unique character.
+    - generic [ref=e10]:
+      - heading "Player 1" [level=3] [ref=e11]
+      - generic [ref=e12]:
+        - 'button "The Visionary D/Di Restore Vision and gain +2 alignment tokens Blind spot: Scope drifts by one step" [ref=e13]':
+          - strong [ref=e14]: The Visionary
+          - generic [ref=e15]: D/Di
+          - generic [ref=e16]: Restore Vision and gain +2 alignment tokens
+          - generic [ref=e17]: "Blind spot: Scope drifts by one step"
+        - 'button "The Catalyst iD Draw 2 extra viewpoint cards Blind spot: KPIs drift by one step" [ref=e18]':
+          - strong [ref=e19]: The Catalyst
+          - generic [ref=e20]: iD
+          - generic [ref=e21]: Draw 2 extra viewpoint cards
+          - generic [ref=e22]: "Blind spot: KPIs drift by one step"
+        - 'button "The Anchor S/Si Prevent round drift and gain +1 token Blind spot: Lose 1 alignment token from slow response" [ref=e23]':
+          - strong [ref=e24]: The Anchor
+          - generic [ref=e25]: S/Si
+          - generic [ref=e26]: Prevent round drift and gain +1 token
+          - generic [ref=e27]: "Blind spot: Lose 1 alignment token from slow response"
+        - 'button "The Analyst C/CS Audit and stabilize one non-stable field Blind spot: A stakeholder field drifts if pressure is high" [ref=e28]':
+          - strong [ref=e29]: The Analyst
+          - generic [ref=e30]: C/CS
+          - generic [ref=e31]: Audit and stabilize one non-stable field
+          - generic [ref=e32]: "Blind spot: A stakeholder field drifts if pressure is high"
+        - 'button "The Connector iS Stabilize both stakeholder fields and gain +1 token Blind spot: Cannot neutralize adversarial disruptions alone" [ref=e33]':
+          - strong [ref=e34]: The Connector
+          - generic [ref=e35]: iS
+          - generic [ref=e36]: Stabilize both stakeholder fields and gain +1 token
+          - generic [ref=e37]: "Blind spot: Cannot neutralize adversarial disruptions alone"
+        - 'button "The Strategist DC Protect one field for 1 round Blind spot: Psychological safety -5" [ref=e38]':
+          - strong [ref=e39]: The Strategist
+          - generic [ref=e40]: DC
+          - generic [ref=e41]: Protect one field for 1 round
+          - generic [ref=e42]: "Blind spot: Psychological safety -5"
+    - generic [ref=e43]:
+      - button "DISC Guide" [ref=e44] [cursor=pointer]
+      - button "Start Round 1" [disabled] [ref=e45]
+```
