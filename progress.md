@@ -14,6 +14,7 @@ Original prompt: PLEASE IMPLEMENT THIS PLAN: FOCAL POINT Rebuild Plan (GitHub Pa
 ## Update - Rebuild Implementation Complete
 
 ### Implemented
+
 - Replaced monolithic flow with ES module architecture:
   - `src/data/{config,fields,characters,viewpointCards,scenarios,disruptions,prompts}.js`
   - `src/{rules,state,render,controller,storage,main}.js`
@@ -35,13 +36,16 @@ Original prompt: PLEASE IMPLEMENT THIS PLAN: FOCAL POINT Rebuild Plan (GitHub Pa
 - Added GitHub Actions Pages workflow at `.github/workflows/deploy-pages.yml`.
 
 ### Validation Run
+
 - `node --check` passed on core modules.
 - Reducer simulation run passed through full 5-round flow to debrief without runtime errors.
 
 ### Known Gap
+
 - Playwright visual test client could not run because `playwright` package is missing in environment.
 
 ### Next Suggestions
+
 - Install Playwright dependency and run automated browser loop using the skill script.
 - Perform a gameplay balancing pass (drift impacts and token economy) after 3-5 manual sessions.
 
@@ -83,18 +87,21 @@ Original prompt: PLEASE IMPLEMENT THIS PLAN: FOCAL POINT Rebuild Plan (GitHub Pa
 Implemented complete navigation and help system enhancements:
 
 ### Back Button Navigation
+
 - Added back button to all screens except Lobby (top-left positioning)
 - Arrow icon (←) + "Back to [Screen Name]" label
 - Smart navigation routing based on current screen context
 - Hover animation on arrow icon for visual feedback
 
 ### Confirmation Dialog System
+
 - Modal confirmation for navigation actions
 - Message: "Return to [screen]? Progress will be lost"
 - Detail text explaining unsaved progress loss
 - Cancel/Confirm button options with danger styling on confirm
 
 ### DISC Behavioral Model Guide
+
 - Comprehensive DISC reference modal with 4 quadrants (D/i/S/C)
 - Each quadrant displays:
   - **Traits**: Core behavioral characteristics
@@ -105,18 +112,21 @@ Implemented complete navigation and help system enhancements:
 - Accessible via "DISC Guide" button on Character Selection screen
 
 ### Card Enhancements
+
 - **"Shares the Mental Model" tooltip**: 🎯 icon with "Activate Stakeholder: Stabilizes the selected stakeholder field"
 - **Card Family Legend**: Displayed above player hand in Response phase
   - White dot = Holds Vision cards
   - Blue dot = Thinks Strategically cards (with blue background styling)
 
 ### Files Modified
+
 - `src/render.js`: Added `renderBackButton()`, `renderDiscGuideModal()`, `renderConfirmationDialog()`, tooltip rendering, legend rendering
 - `src/controller.js`: Added handlers for `go-back`, `show-disc-guide`, `close-disc-guide`, `confirm-action`, `cancel-confirmation`
 - `src/state.js`: Added `showDiscGuide` and `confirmationDialog` to UI state
 - `styles.css`: Added styles for `.screen-header`, `.back-button`, `.disc-guide-modal`, `.confirmation-modal`, `.card-family-legend`, `.card-tooltip-icon`
 
 ### Validation
+
 - All files passed `node --check` syntax validation
 - Module imports verified working correctly
 - CSS styles follow existing design system patterns

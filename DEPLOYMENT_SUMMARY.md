@@ -9,6 +9,7 @@
 ## Changes Pushed to GitHub
 
 ### Files Modified (9)
+
 - `README.md` - Updated with new features
 - `package-lock.json` - Dependency updates
 - `package.json` - Version bump
@@ -20,6 +21,7 @@
 - `styles.css` - Visual polish (600+ lines)
 
 ### Files Added (5)
+
 - `TASK9_VALIDATION.md` - Comprehensive validation report
 - `tasks.md` - Task tracking documentation
 - `test-smoke.spec.js` - Quick smoke tests (4 tests)
@@ -53,6 +55,7 @@ The push to `main` branch has automatically triggered the GitHub Actions workflo
 ### Monitor Deployment
 
 To check deployment status:
+
 1. Go to: https://github.com/haitaowu12/Focal-Point-Game/actions
 2. Look for the latest workflow run
 3. Wait for "Pages Build and Deployment" to complete (typically 1-2 minutes)
@@ -63,6 +66,7 @@ To check deployment status:
 Once deployment completes, the following improvements will be visible:
 
 ### 🎮 Player-Facing Features
+
 - Dramatic disruption modals with human narratives
 - Manual character ability activation with confirmation dialogs
 - Simplified board view toggle (Full Grid ↔ Focused View)
@@ -73,6 +77,7 @@ Once deployment completes, the following improvements will be visible:
 - Rich visual animations and responsive design
 
 ### 🎨 Visual Enhancements
+
 - Richer color gradients and gold accents
 - Smooth gauge animations (300ms)
 - Card hover effects with lift and shadow
@@ -80,6 +85,7 @@ Once deployment completes, the following improvements will be visible:
 - Tablet/mobile responsive layout
 
 ### 📚 Help Systems
+
 - Comprehensive stability legend
 - Card family legend (Holds Vision vs Thinks Strategically)
 - Tooltips on cards and fields
