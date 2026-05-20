@@ -8,6 +8,11 @@ import { getDisruptionById, getCharacterById, evaluateWin } from "./rules.js";
 
 const FIELD_BY_ID = Object.fromEntries(SHARED_MODEL_FIELDS.map((f) => [f.id, f]));
 const CARD_BY_ID = Object.fromEntries(VIEWPOINT_CARDS.map((c) => [c.id, c]));
+const AUTHOR_URL = "https://haitaowu12.github.io/tony-wu-home/";
+
+function renderAuthorLink(label = "TW · About") {
+  return `<a class="author-link" href="${AUTHOR_URL}" aria-label="Know the author: Tony Wu, systems engineer and builder of this project">${label}</a>`;
+}
 
 const DISC_TYPES = {
   D: {
@@ -116,6 +121,7 @@ function renderLobby(state) {
             .join("")}
         </div>
         <div class="console-actions">
+          ${renderAuthorLink()}
           <button class="btn btn-ghost" data-action="add-player">ENLIST PERSONNEL</button>
           <button class="btn btn-primary btn-large" data-action="start-game">INITIALIZE MISSION</button>
         </div>
@@ -1178,6 +1184,10 @@ function renderDebrief(state) {
         <div class="console-actions">
           <button class="btn btn-ghost" data-action="export-debrief">EXPORT TELEMETRY</button>
           <button class="btn btn-primary btn-large" data-action="reset-game">RE-INITIALIZE MISSION</button>
+        </div>
+        <div class="author-note">
+          <span>Built by Tony Wu.</span>
+          ${renderAuthorLink("Know the author")}
         </div>
       </div>
     </section>
