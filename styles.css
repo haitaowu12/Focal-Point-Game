@@ -3193,6 +3193,46 @@ textarea {
   display: flex;
   justify-content: center;
   gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.author-link {
+  align-items: center;
+  border: 1px solid var(--line-dim);
+  border-radius: var(--radius-md);
+  color: var(--ink-soft);
+  display: inline-flex;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  min-height: 38px;
+  padding: 8px 12px;
+  text-decoration: none;
+  transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
+}
+
+.author-link:hover,
+.author-link:focus-visible {
+  background: oklch(75% 0.12 180 / 0.08);
+  border-color: var(--brand);
+  color: var(--brand-bright);
+}
+
+.author-note {
+  align-items: center;
+  color: var(--ink-dim);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 12px;
+  gap: var(--space-sm);
+  justify-content: flex-end;
+  margin-top: var(--space-md);
+}
+
+.author-note .author-link {
+  min-height: 30px;
+  padding: 5px 9px;
 }
 
 /* Assembly Screen / Character Selection Styles */
