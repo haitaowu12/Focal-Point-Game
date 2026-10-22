@@ -39,7 +39,7 @@ Built by [Tony Wu](https://haitaowu12.github.io/tony-wu-home/) - systems enginee
 No build step is required.
 
 ```bash
-cd Focal-Point-Game
+cd .
 python3 -m http.server 5173
 ```
 
