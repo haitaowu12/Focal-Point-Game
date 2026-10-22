@@ -39,7 +39,7 @@ Built by [Tony Wu](https://haitaowu12.github.io/tony-wu-home/) - systems enginee
 No build step is required.
 
 ```bash
-cd /Users/tony/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/Second\ Brain/01-Projects/focal-point-game
+cd /Users/tony/Developer/focal-point-game
 python3 -m http.server 5173
 ```
 
