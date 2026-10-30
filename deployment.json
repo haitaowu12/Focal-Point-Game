@@ -1,0 +1,101 @@
+{
+  "source_commit": "30e9867bec80cb1b240d68b18e6cb393df3951ed",
+  "hosting": "GitHub Pages branch publishing",
+  "files": [
+    {
+      "path": "LICENSE",
+      "bytes": 1073,
+      "sha256": "49f90130fc08aa84813eec2afd9f83e8fc4182590adecb48b01c3f384cb2ffc4"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3159,
+      "sha256": "061b649abf129c631359cc41bab937b730be4f35b23858c0a550c9969c703e3f"
+    },
+    {
+      "path": "game.js",
+      "bytes": 65203,
+      "sha256": "f4638390589eb409071218529e4f95d1d12fbfa46eead7d47ce0bbf592c8f3b6"
+    },
+    {
+      "path": "index.html",
+      "bytes": 909,
+      "sha256": "304526e02c96d157347caad13bc2e8f973d0c65f08a5e94477211849871ca353"
+    },
+    {
+      "path": "src/controller.js",
+      "bytes": 11239,
+      "sha256": "58599da601bf1ef3eea0de50cb8dc45942aab6aef8a1148590c70616bdd8340c"
+    },
+    {
+      "path": "src/data/characters.js",
+      "bytes": 1752,
+      "sha256": "0615e12e89e5d64369c520266efa521eabe136dd51ca554452a68b32835cea10"
+    },
+    {
+      "path": "src/data/config.js",
+      "bytes": 722,
+      "sha256": "769ed28397cf5203ee7ccecd930cd38bc1084db2d77b0f41cbfdb16186c3c257"
+    },
+    {
+      "path": "src/data/disruptions.js",
+      "bytes": 5514,
+      "sha256": "7608909802e7181062602f42a9ee6631fd3918550759da5f955d1857e5090448"
+    },
+    {
+      "path": "src/data/fields.js",
+      "bytes": 1213,
+      "sha256": "3225a61821ff04b2aba9593eb992d0228eb94519e7aed73433d68800761b6a14"
+    },
+    {
+      "path": "src/data/prompts.js",
+      "bytes": 1203,
+      "sha256": "48729a328491bd8fdde5c83774f0f94cd8d6e12aa8da0b65458bc0d9303f4acd"
+    },
+    {
+      "path": "src/data/scenarios.js",
+      "bytes": 1232,
+      "sha256": "d2a217b9aa129c034d7a7ca37b477655809db9a477fdeed1182d16e06fd16e1f"
+    },
+    {
+      "path": "src/data/viewpointCards.js",
+      "bytes": 1980,
+      "sha256": "08e8a5e244800b23ee717615a8090d1a4228dec4837e0cf0a563c90cb00d140f"
+    },
+    {
+      "path": "src/main.js",
+      "bytes": 322,
+      "sha256": "97a96fd92abad93c2df387e455fb376c169a02bd6f24e82afad569dd9066a2db"
+    },
+    {
+      "path": "src/render.js",
+      "bytes": 50782,
+      "sha256": "4451c3cfe7a1f7f7c00b03de3c36e9e5d23b452582056bed890cd3cba5f6a9d1"
+    },
+    {
+      "path": "src/rules.js",
+      "bytes": 10560,
+      "sha256": "255b5411fd8a25cb51da565953083509066b2ab1e38b02baa204aedce8a7fff6"
+    },
+    {
+      "path": "src/state.js",
+      "bytes": 18049,
+      "sha256": "9652341d68b372ee2984d49e01c69885283134ec7ce1de496c574b3a44bcaff0"
+    },
+    {
+      "path": "src/storage.js",
+      "bytes": 651,
+      "sha256": "a27c77132118fcfba9f36725e9aed1e7a76bf4043a0d1163f51d02900d019c9b"
+    },
+    {
+      "path": "src/utils.js",
+      "bytes": 673,
+      "sha256": "36efa5739016ac1b55905e965806eda6bd74edc70b687672d9be485f947b6328"
+    },
+    {
+      "path": "styles.css",
+      "bytes": 69144,
+      "sha256": "a89810ec98e5418b1100fd61a6402280bfc03cb734fe5eb8406ebf83d4e0298d"
+    }
+  ]
+}
