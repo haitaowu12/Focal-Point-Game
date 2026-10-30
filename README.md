@@ -69,3 +69,9 @@ The workflow publishes the static site from the repo root.
 ## Future Extension
 
 Real-time online multiplayer is intentionally deferred. The current reducer/action model is structured so an authoritative network adapter can be added later without rewriting core rules.
+
+## Branch-hosted Pages release — 29 October 2026
+
+Current static files are published from `gh-pages` with `.nojekyll`, a source commit and per-file SHA-256 manifest. Custom deployment Actions are no longer required. Only `index.html`, `styles.css`, `src/`, README and licence are distributed.
+
+A browser run exposed a duplicated disruption overlay: both the round panel and the application shell rendered the same alert. The application shell now owns it once. The regression checks one alert after a draw, its removal after acknowledgement, and retention of the same event and discard count. Actual browser play covers lobby, role selection, first-round disruption, acknowledgement and save/load. This is software evidence, not human learning-effectiveness evidence.
