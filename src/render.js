@@ -976,7 +976,6 @@ function renderRoundPanel(state) {
   const scenario = SCENARIOS.find((s) => s.id === state.scenarioId);
   const disruption = state.currentDisruption ? getDisruptionById(state.currentDisruption) : null;
   const activePlayer = state.players[state.activePlayerIndex] || null;
-  const showModal = state.ui.showDisruptionModal && disruption;
   const showFinalRoundModal = state.ui.showFinalRoundModal && state.round === GAME_CONFIG.totalRounds;
 
   return `
@@ -1078,7 +1077,6 @@ function renderRoundPanel(state) {
         </ol>
       </details>
     </section>
-    ${showModal ? renderDisruptionModal(disruption) : ""}
     ${renderAbilityConfirmation(activePlayer, state)}
   `;
 }
