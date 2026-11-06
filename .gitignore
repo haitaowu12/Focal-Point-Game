@@ -20,3 +20,5 @@ npm-debug.log*
 output/playwright/
 test-results/
 playwright-report/
+.firebase/
+gha-creds-*.json
