@@ -1,10 +1,11 @@
 {
   "name": "focal-point-game",
   "version": "1.0.0",
-  "description": "A static browser game for leadership training built around the Cohort 9 Shared Model. This rebuild focuses on deterministic state transitions, reliable hot-seat multiplayer, and GitHub Pages hosting.",
+  "description": "A static browser game for leadership training built around the Cohort 9 Shared Model. This rebuild focuses on deterministic state transitions, reliable hot-seat multiplayer, and static web hosting.",
   "main": "game.js",
   "scripts": {
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "build:hosting": "node scripts/build-hosting.mjs"
   },
   "repository": {
     "type": "git",

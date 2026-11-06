@@ -7,7 +7,7 @@ tags: []
 
 # FOCAL POINT: Hold the Vision
 
-A static browser game for leadership training built around the Cohort 9 Shared Model. This rebuild focuses on deterministic state transitions, reliable hot-seat multiplayer, and GitHub Pages hosting.
+A static browser game for leadership training built around the Cohort 9 Shared Model. This rebuild focuses on deterministic state transitions, reliable hot-seat multiplayer, and static web hosting.
 
 Built by [Tony Wu](https://haitaowu12.github.io/tony-wu-home/) - systems engineering tools, assurance workflows, and learning simulations.
 
@@ -75,3 +75,13 @@ Real-time online multiplayer is intentionally deferred. The current reducer/acti
 Current static files are published from `gh-pages` with `.nojekyll`, a source commit and per-file SHA-256 manifest. Custom deployment Actions are no longer required. Only `index.html`, `styles.css`, `src/`, README and licence are distributed.
 
 A browser run exposed a duplicated disruption overlay: both the round panel and the application shell rendered the same alert. The application shell now owns it once. The regression checks one alert after a draw, its removal after acknowledgement, and retention of the same event and discard count. Actual browser play covers lobby, role selection, first-round disruption, acknowledgement and save/load. This is software evidence, not human learning-effectiveness evidence.
+
+## Firebase Hosting
+
+[Open the published project](https://focal-point-game.web.app/). Firebase Hosting is the primary destination for future releases. Run `npm test` and `npm run build:hosting`; publish only `build/firebase/`. The staging script copies the public application allowlist, not the repository root.
+
+```sh
+firebase deploy --only hosting --project tony-wu-projects
+```
+
+The repository configuration selects the site and public output directory. Hosting uses the no-cost Spark plan; source pushes do not deploy automatically. Existing hosts remain available.
