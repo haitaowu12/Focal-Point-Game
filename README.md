@@ -9,7 +9,7 @@ tags: []
 
 A static browser game for leadership training built around the Cohort 9 Shared Model. This rebuild focuses on deterministic state transitions, reliable hot-seat multiplayer, and static web hosting.
 
-Built by [Tony Wu](https://haitaowu12.github.io/tony-wu-home/) - systems engineering tools, assurance workflows, and learning simulations.
+Built by [Tony Wu](https://tony-wu-home.web.app/) - systems engineering tools, assurance workflows, and learning simulations.
 
 ## Phase 1 Features
 

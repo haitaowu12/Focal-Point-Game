@@ -8,7 +8,7 @@ import { getDisruptionById, getCharacterById, evaluateWin } from "./rules.js";
 
 const FIELD_BY_ID = Object.fromEntries(SHARED_MODEL_FIELDS.map((f) => [f.id, f]));
 const CARD_BY_ID = Object.fromEntries(VIEWPOINT_CARDS.map((c) => [c.id, c]));
-const AUTHOR_URL = "https://haitaowu12.github.io/tony-wu-home/";
+const AUTHOR_URL = "https://tony-wu-home.web.app/";
 
 function renderAuthorLink(label = "TW · About") {
   return `<a class="author-link" href="${AUTHOR_URL}" aria-label="Know the author: Tony Wu, systems engineer and builder of this project">${label}</a>`;
